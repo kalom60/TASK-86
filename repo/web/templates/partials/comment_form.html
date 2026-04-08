@@ -1,0 +1,38 @@
+<form
+  id="add-comment-form"
+  hx-post="/materials/{{.MaterialID}}/comments"
+  hx-target="#comments-list"
+  hx-swap="outerHTML"
+  hx-on::after-request="this.reset()">
+
+  {{if .Error}}
+  <div class="alert alert-danger alert-sm py-2 mb-3" role="alert">
+    <i class="bi bi-exclamation-triangle me-1"></i>{{.Error}}
+  </div>
+  {{end}}
+
+  <div class="mb-3">
+    <label class="form-label" for="comment-body">Add a comment</label>
+    <textarea
+      class="form-control"
+      id="comment-body"
+      name="body"
+      rows="3"
+      maxlength="500"
+      placeholder="Share your thoughts (max 500 characters)…"
+      x-data
+      x-on:input="$el.nextElementSibling.textContent = $el.value.length + ' / 500'"
+      required>{{if .Body}}{{.Body}}{{end}}</textarea>
+    <small class="text-muted" aria-live="polite">{{if .Body}}{{len .Body}}{{else}}0{{end}} / 500</small>
+  </div>
+
+  <div id="comment-error" class="mt-2"></div>
+
+  <button class="btn btn-primary btn-sm" type="submit"
+    hx-on::before-request="this.disabled=true"
+    hx-on::after-request="this.disabled=false">
+    <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+    Post Comment
+  </button>
+
+</form>

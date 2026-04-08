@@ -1,0 +1,44 @@
+{{define "favorites/share"}}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <a href="/favorites" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Lists
+      </a>
+      <h2 class="h4 mb-0">Share List</h2>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <p class="text-muted mb-3">
+          Share this link with anyone to let them view your favorites list. The link expires in 7 days.
+        </p>
+
+        <div class="input-group mb-3">
+          <input
+            id="share-url-input"
+            type="text"
+            class="form-control font-monospace"
+            value="{{.ShareURL}}"
+            readonly
+            aria-label="Share URL">
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            onclick="navigator.clipboard.writeText(document.getElementById('share-url-input').value).then(function(){this.innerHTML='<i class=\'bi bi-check2\'></i> Copied';setTimeout(function(){document.querySelector(\'[onclick]\').innerHTML=\'<i class=\\\'bi bi-clipboard\\\'></i> Copy\'},2000)}.bind(this))"
+            aria-label="Copy to clipboard">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+
+        <p class="small text-muted mb-0">
+          <i class="bi bi-info-circle me-1"></i>
+          Anyone with this link can view the list contents — no login required.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{end}}

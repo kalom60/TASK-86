@@ -1,0 +1,197 @@
+<div class="mb-4">
+  {{if .User}}
+  <h2 class="h4 fw-bold mb-1">Welcome back, {{.User.Username}}</h2>
+  <p class="text-muted small mb-0">Role: <span class="badge role-badge-{{.User.Role}} text-capitalize">{{.User.Role}}</span></p>
+  {{else}}
+  <h2 class="h4 fw-bold mb-0">Dashboard</h2>
+  {{end}}
+</div>
+
+{{if .User}}
+
+{{if eq .User.Role "student"}}
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/my-orders"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+          <i class="bi bi-cart fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">My Orders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/my-favorites"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-danger bg-opacity-10 p-3">
+          <i class="bi bi-heart fs-4 text-danger"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">My Favorites</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/recent-materials"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-success bg-opacity-10 p-3">
+          <i class="bi bi-book fs-4 text-success"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Recent Materials</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{if eq .User.Role "admin"}}
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/total-orders"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+          <i class="bi bi-cart fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Total Orders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/pending-returns"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+          <i class="bi bi-arrow-return-left fs-4 text-warning"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Pending Returns</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/active-users"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-success bg-opacity-10 p-3">
+          <i class="bi bi-people fs-4 text-success"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Active Users</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{if eq .User.Role "clerk"}}
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/pending-issues"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+          <i class="bi bi-box-seam fs-4 text-warning"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Pending Issues</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/backorders"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-danger bg-opacity-10 p-3">
+          <i class="bi bi-exclamation-circle fs-4 text-danger"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Backorders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{if eq .User.Role "instructor"}}
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/course-plans"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+          <i class="bi bi-calendar3 fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Course Plans</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{if eq .User.Role "moderator"}}
+<div class="row g-3">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card border-0 shadow-sm h-100"
+         hx-get="/api/stats/moderation-queue"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+          <i class="bi bi-shield-check fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 fw-bold mb-0">—</div>
+          <div class="text-muted small">Moderation Queue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{end}}{{/* end if .User */}}

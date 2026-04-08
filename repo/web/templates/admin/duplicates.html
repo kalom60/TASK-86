@@ -1,0 +1,129 @@
+{{define "admin/duplicates"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">Duplicate User Detection</h2>
+</div>
+
+<div id="dup-flash" class="mb-3"></div>
+
+{{if .Pairs}}
+<div class="row g-3 mb-4">
+  {{range .Pairs}}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+
+        {{/* Similarity score */}}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="w-50">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <small class="text-muted fw-semibold text-uppercase">Similarity</small>
+              <small class="fw-semibold">{{printf "%.0f" (mul .Score 100)}}%</small>
+            </div>
+            <div class="progress" style="height:6px;">
+              <div class="progress-bar bg-warning"
+                   role="progressbar"
+                   style="width:{{printf "%.0f" (mul .Score 100)}}%"
+                   aria-valuenow="{{printf "%.0f" (mul .Score 100)}}"
+                   aria-valuemin="0"
+                   aria-valuemax="100"></div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-warning btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#mergeModal-{{.UserA.ID}}-{{.UserB.ID}}"
+            data-primary-id="{{.UserA.ID}}"
+            data-duplicate-id="{{.UserB.ID}}"
+            data-primary-name="{{.UserA.Username}}"
+            data-dup-name="{{.UserB.Username}}">
+            <i class="bi bi-arrow-left-right me-1"></i> Merge
+          </button>
+        </div>
+
+        <div class="row g-3">
+          {{/* User A — Primary */}}
+          <div class="col-md-6">
+            <div class="card border-success h-100">
+              <div class="card-body">
+                <p class="fw-semibold mb-1">Primary: {{.UserA.Username}}</p>
+                <p class="text-muted small mb-1">{{.UserA.Email}}</p>
+                <span class="badge role-badge-{{.UserA.Role}} mb-1">{{.UserA.Role}}</span>
+                <p class="text-muted small mb-0">ID: {{.UserA.ID}} &mdash; Created: {{.UserA.CreatedAt}}</p>
+              </div>
+            </div>
+          </div>
+
+          {{/* User B — Duplicate */}}
+          <div class="col-md-6">
+            <div class="card border-danger h-100">
+              <div class="card-body">
+                <p class="fw-semibold mb-1">Duplicate: {{.UserB.Username}}</p>
+                <p class="text-muted small mb-1">{{.UserB.Email}}</p>
+                <span class="badge role-badge-{{.UserB.Role}} mb-1">{{.UserB.Role}}</span>
+                <p class="text-muted small mb-0">ID: {{.UserB.ID}} &mdash; Created: {{.UserB.CreatedAt}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {{/* Bootstrap Modal for confirmation */}}
+    <div class="modal fade" id="mergeModal-{{.UserA.ID}}-{{.UserB.ID}}" tabindex="-1"
+         aria-labelledby="mergeModalLabel-{{.UserA.ID}}-{{.UserB.ID}}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mergeModalLabel-{{.UserA.ID}}-{{.UserB.ID}}">Confirm Merge</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-2">
+              The following will be transferred from
+              <strong>{{.UserB.Username}}</strong> to
+              <strong>{{.UserA.Username}}</strong>:
+            </p>
+            <ul class="mb-3">
+              <li>All orders</li>
+              <li>All ratings</li>
+              <li>All comments</li>
+              <li>All favorites lists</li>
+              <li>All notifications</li>
+            </ul>
+            <p class="text-danger small mb-0">
+              The duplicate account will be soft-deleted and cannot be recovered.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form hx-post="/admin/duplicates/merge" hx-target="#dup-flash" class="d-inline">
+              <input type="hidden" name="primary_id"   value="{{.UserA.ID}}">
+              <input type="hidden" name="duplicate_id" value="{{.UserB.ID}}">
+              <button type="submit"
+                      class="btn btn-danger"
+                      data-bs-dismiss="modal"
+                      hx-on::before-request="this.disabled=true"
+                      hx-on::after-request="this.disabled=false">
+                <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+                <i class="bi bi-arrow-left-right me-1"></i> Merge Users
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  {{end}}
+</div>
+{{else}}
+<div class="card">
+  <div class="card-body text-center text-muted py-5">
+    <i class="bi bi-people fs-1 d-block mb-2 opacity-25"></i>
+    No potential duplicate pairs found.
+  </div>
+</div>
+{{end}}
+{{end}}

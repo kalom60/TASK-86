@@ -1,0 +1,5 @@
+{{define "partials/inbox_badge"}}
+<span id="inbox-badge" class="badge rounded-pill bg-danger{{if eq .Count 0}} d-none{{end}}" hx-swap-oob="true">
+  {{if gt .Count 0}}{{.Count}}{{end}}
+</span>
+{{end}}

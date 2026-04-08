@@ -1,0 +1,27 @@
+<div id="favorites-items-{{.ListID}}">
+  {{if .Items}}
+  <ul class="list-group list-group-flush">
+    {{range .Items}}
+    <li class="list-group-item d-flex align-items-center justify-content-between" id="fav-item-{{.ID}}">
+      <div>
+        <a class="text-decoration-none" href="/materials/{{.MaterialID}}">Material #{{.MaterialID}}</a>
+        <small class="text-muted ms-2">Added {{.AddedAt}}</small>
+      </div>
+      <form
+        hx-delete="/favorites/{{$.ListID}}/items/{{.MaterialID}}"
+        hx-target="#favorites-items-{{$.ListID}}"
+        hx-swap="outerHTML">
+        <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Remove from list"
+          hx-on::before-request="this.disabled=true"
+          hx-on::after-request="this.disabled=false">
+          <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </form>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="text-muted small mb-0">This list has no items yet.</p>
+  {{end}}
+</div>

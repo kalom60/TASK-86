@@ -1,0 +1,102 @@
+<!-- distribution/custody.html — custody chain timeline for a single copy -->
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">Custody Chain</h2>
+    <p class="text-muted small mb-0">
+      Complete history for copy <code>{{.ScanID}}</code>
+    </p>
+  </div>
+  <a class="btn btn-outline-secondary btn-sm" href="/distribution/ledger">
+    <i class="bi bi-arrow-left me-1"></i> Back to Ledger
+  </a>
+</div>
+
+{{if .Chain}}
+<ul class="list-group" aria-label="Custody chain timeline">
+  {{range $i, $evt := .Chain}}
+  <li class="list-group-item">
+    <div class="d-flex align-items-start gap-3">
+
+      <!-- Event icon -->
+      <div class="flex-shrink-0 mt-1">
+        {{if eq $evt.EventType "issued"}}
+        <i class="bi bi-box-arrow-down fs-5 text-primary"></i>
+        {{else if eq $evt.EventType "returned"}}
+        <i class="bi bi-box-arrow-up fs-5 text-success"></i>
+        {{else if eq $evt.EventType "lost"}}
+        <i class="bi bi-exclamation-triangle fs-5 text-warning"></i>
+        {{else if eq $evt.EventType "damaged"}}
+        <i class="bi bi-exclamation-triangle fs-5 text-danger"></i>
+        {{else}}
+        <i class="bi bi-circle fs-5 text-muted"></i>
+        {{end}}
+      </div>
+
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mb-1">
+          <div class="d-flex align-items-center gap-2">
+            {{$et := $evt.EventType}}
+            {{if eq $et "issued"}}
+            <span class="badge bg-primary">Issued</span>
+            {{else if eq $et "returned"}}
+            <span class="badge bg-success">Returned</span>
+            {{else if eq $et "lost"}}
+            <span class="badge bg-warning text-dark">Lost</span>
+            {{else if eq $et "damaged"}}
+            <span class="badge bg-danger">Damaged</span>
+            {{else if eq $et "reissued"}}
+            <span class="badge bg-info text-dark">Reissued</span>
+            {{else}}
+            <span class="badge bg-secondary">{{$et}}</span>
+            {{end}}
+
+            {{if or $evt.CustodyFrom $evt.CustodyTo}}
+            <span class="badge bg-secondary">{{if $evt.CustodyFrom}}{{$evt.CustodyFrom}}{{else}}—{{end}}</span>
+            <i class="bi bi-arrow-right mx-1 text-muted"></i>
+            <span class="badge bg-primary">{{if $evt.CustodyTo}}{{$evt.CustodyTo}}{{else}}—{{end}}</span>
+            {{end}}
+          </div>
+          <span class="small text-muted">{{$evt.OccurredAt}}</span>
+        </div>
+
+        <dl class="row row-cols-auto g-2 mb-0 small">
+          {{if $evt.OrderID}}
+          <div class="col">
+            <dt class="text-muted d-inline">Order:</dt>
+            <dd class="d-inline ms-1">
+              <a href="/orders/{{$evt.OrderID}}">#{{$evt.OrderID}}</a>
+            </dd>
+          </div>
+          {{end}}
+
+          <div class="col">
+            <dt class="text-muted d-inline">Material:</dt>
+            <dd class="d-inline ms-1">{{$evt.MaterialID}}</dd>
+          </div>
+
+          <div class="col">
+            <dt class="text-muted d-inline">Qty:</dt>
+            <dd class="d-inline ms-1">{{$evt.Qty}}</dd>
+          </div>
+
+          {{if $evt.ActorID}}
+          <div class="col">
+            <dt class="text-muted d-inline">Clerk/Actor:</dt>
+            <dd class="d-inline ms-1">{{$evt.ActorID}}</dd>
+          </div>
+          {{end}}
+        </dl>
+      </div>
+
+    </div>
+  </li>
+  {{end}}
+</ul>
+
+{{else}}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-search fs-1 d-block mb-2 opacity-25"></i>
+  <p class="mb-0">No events found for copy ID <code>{{.ScanID}}</code>.</p>
+</div>
+{{end}}

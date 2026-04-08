@@ -1,0 +1,110 @@
+{{define "content"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">Return Requests Queue</h2>
+</div>
+
+{{if .Requests}}
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle" aria-label="Pending return requests">
+    <thead>
+      <tr>
+        <th scope="col">Request #</th>
+        <th scope="col">Order #</th>
+        <th scope="col">User ID</th>
+        <th scope="col">Type</th>
+        <th scope="col">Reason</th>
+        <th scope="col">Requested</th>
+        <th scope="col">Status</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Requests}}
+      <tr id="return-row-{{.ID}}">
+
+        <td>{{.ID}}</td>
+
+        <td>
+          <a href="/orders/{{.OrderID}}">#{{.OrderID}}</a>
+        </td>
+
+        <td>{{.UserID}}</td>
+
+        <td>
+          {{if eq .Type "return"}}
+          <span class="badge bg-primary">Return</span>
+          {{else if eq .Type "exchange"}}
+          <span class="badge bg-info text-dark">Exchange</span>
+          {{else if eq .Type "refund"}}
+          <span class="badge bg-secondary">Refund</span>
+          {{else}}
+          <span class="badge bg-secondary">{{.Type}}</span>
+          {{end}}
+        </td>
+
+        <td>
+          {{if .Reason}}
+          <span class="text-truncate d-inline-block" style="max-width: 200px;" title="{{.Reason}}">{{.Reason}}</span>
+          {{else}}
+          <span class="text-muted">—</span>
+          {{end}}
+        </td>
+
+        <td>{{.RequestedAt}}</td>
+
+        <td id="return-status-{{.ID}}">
+          {{if eq .Status "pending"}}
+          <span class="badge bg-warning text-dark">Pending</span>
+          {{else if eq .Status "approved"}}
+          <span class="badge bg-success">Approved</span>
+          {{else if eq .Status "rejected"}}
+          <span class="badge bg-danger">Rejected</span>
+          {{else}}
+          <span class="badge bg-secondary">{{.Status}}</span>
+          {{end}}
+        </td>
+
+        <td>
+          {{if eq .Status "pending"}}
+          <div class="d-flex gap-1 flex-wrap">
+            <button
+              class="btn btn-success btn-sm"
+              hx-post="/admin/returns/{{.ID}}/approve"
+              hx-target="#return-row-{{.ID}}"
+              hx-swap="outerHTML"
+              hx-confirm="Approve return request #{{.ID}}?"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              <i class="bi bi-check-lg" aria-hidden="true"></i>
+              Approve
+            </button>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              hx-post="/admin/returns/{{.ID}}/reject"
+              hx-target="#return-row-{{.ID}}"
+              hx-swap="outerHTML"
+              hx-confirm="Reject return request #{{.ID}}?"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+              Reject
+            </button>
+          </div>
+          {{else}}
+          <span class="text-muted">Resolved</span>
+          {{end}}
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="text-center py-5">
+  <i class="bi bi-check-circle fs-1 text-muted d-block mb-3" aria-hidden="true"></i>
+  <p class="text-muted">No pending return requests.</p>
+</div>
+{{end}}
+{{end}}

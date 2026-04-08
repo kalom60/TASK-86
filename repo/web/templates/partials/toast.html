@@ -1,0 +1,10 @@
+{{define "partials/toast"}}
+<div id="toast-container" hx-swap-oob="true">
+  <div class="toast show align-items-center text-bg-{{if eq .Type "success"}}success{{else if eq .Type "error"}}danger{{else}}primary{{end}} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">{{.Message}}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+{{end}}

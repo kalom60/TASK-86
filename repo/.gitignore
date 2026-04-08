@@ -1,0 +1,29 @@
+# Database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Environment secrets — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Built binary
+server
+dist/
+
+# Offline map tiles — exclude everything except the seed tiles (zoom 0-2)
+# shipped with the repo to keep Leaflet functional out of the box.
+# Run scripts/download_tiles.sh to fetch higher-zoom tiles.
+web/static/tiles/**/*.png
+!web/static/tiles/0/**/*.png
+!web/static/tiles/1/**/*.png
+!web/static/tiles/2/**/*.png
+
+# Go test cache
+*.test
+
+# OS artifacts
+.DS_Store
+Thumbs.db

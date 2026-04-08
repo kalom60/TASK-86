@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - portal_data:/app/data
+      - ./web:/app/web  # live template reload
+    environment:
+      - APP_ENV=development
+    ports:
+      - "3000:3000"

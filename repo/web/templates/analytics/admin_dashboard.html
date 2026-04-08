@@ -1,0 +1,415 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">Admin Analytics Dashboard</h2>
+    <p class="text-muted small mb-0">KPIs refreshed on page load &mdash; 30-day window</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     KPI Cards
+============================================================= -->
+<div class="row g-3 mb-4">
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-cart3 fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.TotalOrders}}</div>
+          <div class="text-muted small">Total Orders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.PendingOrders}}</div>
+          <div class="text-muted small">Pending Orders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-check2-circle fs-4 text-success"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.FulfillmentRate}}%</div>
+          <div class="text-muted small">Fulfillment Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-arrow-return-left fs-4 text-info"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.ReturnRate}}%</div>
+          <div class="text-muted small">Return Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-people fs-4 text-secondary"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.ActiveUsers}}</div>
+          <div class="text-muted small">Active Users (30d)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Revenue & Conversion KPI Cards
+============================================================= -->
+<div class="row g-3 mb-4">
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-currency-dollar fs-4 text-success"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">${{.GMV}}</div>
+          <div class="text-muted small">GMV (30d)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-receipt fs-4 text-primary"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">${{.AOV}}</div>
+          <div class="text-muted small">Avg Order Value (30d)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-graph-up-arrow fs-4 text-warning"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.ConversionRate}}%</div>
+          <div class="text-muted small">Conversion Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center" style="width:48px;height:48px;flex-shrink:0;">
+          <i class="bi bi-arrow-repeat fs-4 text-info"></i>
+        </div>
+        <div>
+          <div class="h3 mb-0">{{.RepeatPurchase}}%</div>
+          <div class="text-muted small">Repeat Purchase Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     Order Pipeline Funnel
+============================================================= -->
+{{if .Funnel}}
+<div class="card mb-4">
+  <div class="card-header fw-semibold">Order Pipeline Funnel</div>
+  <div class="card-body">
+    {{- $funnelMax := 1 -}}
+    {{- range .Funnel}}{{if gt .Count $funnelMax}}{{$funnelMax = .Count}}{{end}}{{end}}
+    <div class="d-flex flex-column gap-2">
+      {{range .Funnel}}
+      <div class="d-flex align-items-center gap-3">
+        <div class="text-muted small text-end" style="min-width:140px;">{{.Stage}}</div>
+        <div class="flex-grow-1">
+          {{if gt .Count 0}}
+          <div class="progress" style="height:22px;" role="progressbar" aria-valuenow="{{.Count}}" aria-valuemin="0" aria-valuemax="{{$funnelMax}}">
+            <div class="progress-bar
+              {{if eq .Stage "completed"}}bg-success
+              {{else if eq .Stage "canceled"}}bg-danger
+              {{else if eq .Stage "in_transit"}}bg-info
+              {{else}}bg-primary{{end}}"
+              style="width:{{mul (div (float64 .Count) (float64 $funnelMax)) 100}}%">
+            </div>
+          </div>
+          {{else}}
+          <div class="progress" style="height:22px;"><div class="progress-bar bg-secondary" style="width:2px;min-width:2px;"></div></div>
+          {{end}}
+        </div>
+        <div class="fw-semibold" style="min-width:40px;">{{.Count}}</div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+</div>
+{{end}}
+
+<!-- ============================================================
+     Orders by Status — Bar Chart
+============================================================= -->
+<div class="card mb-4">
+  <div class="card-header fw-semibold">Orders by Status</div>
+  <div class="card-body">
+    <canvas id="statusChart" width="600" height="250" aria-label="Orders by status bar chart" role="img"></canvas>
+  </div>
+</div>
+
+<!-- ============================================================
+     Top 10 Materials by Orders
+============================================================= -->
+<div class="card mb-4">
+  <div class="card-header fw-semibold">Top 10 Materials by Orders</div>
+  <div class="card-body">
+    {{if .TopMaterials}}
+    <canvas id="topMaterialsChart" width="600" height="250" aria-label="Top materials bar chart" role="img" class="mb-4"></canvas>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle" id="topMaterialsTable">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Orders</th>
+            <th>Avg Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .TopMaterials}}
+          <tr>
+            <td>{{.Title}}</td>
+            <td>{{.OrderCount}}</td>
+            <td>{{printf "%.1f" .AvgRating}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <p class="text-muted">No order data available.</p>
+    {{end}}
+  </div>
+</div>
+
+<!-- ============================================================
+     Inventory Levels Table (sortable via Alpine.js)
+============================================================= -->
+<div class="card mb-4" x-data="inventoryTable()">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="fw-semibold">Inventory Levels</span>
+    <input
+      type="text"
+      x-model="search"
+      placeholder="Filter materials…"
+      class="form-control form-control-sm w-auto"
+      style="max-width:200px;"
+      aria-label="Filter inventory table">
+  </div>
+  <div class="card-body p-0">
+    {{if .Inventory}}
+    <div class="table-responsive">
+      <table class="table table-sm table-striped align-middle mb-0" id="inventoryTable">
+        <thead>
+          <tr>
+            <th @click="sortBy('title')" class="sortable" :class="sortClass('title')" style="cursor:pointer;">Material</th>
+            <th @click="sortBy('total')" class="sortable" :class="sortClass('total')" style="cursor:pointer;">Total</th>
+            <th @click="sortBy('available')" class="sortable" :class="sortClass('available')" style="cursor:pointer;">Available</th>
+            <th @click="sortBy('reserved')" class="sortable" :class="sortClass('reserved')" style="cursor:pointer;">Reserved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in filteredRows()" :key="row.id">
+            <tr>
+              <td x-text="row.title"></td>
+              <td x-text="row.total"></td>
+              <td x-text="row.available"></td>
+              <td x-text="row.reserved"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <p class="text-muted p-3 mb-0">No inventory data available.</p>
+    {{end}}
+  </div>
+</div>
+
+<!-- ============================================================
+     Export Buttons
+============================================================= -->
+<div class="card mb-4">
+  <div class="card-header fw-semibold">Data Exports</div>
+  <div class="card-body">
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/analytics/export/orders" class="btn btn-outline-secondary btn-sm" download>
+        <i class="bi bi-download me-1"></i> Export Orders CSV
+      </a>
+      <a href="/analytics/export/distribution" class="btn btn-outline-secondary btn-sm" download>
+        <i class="bi bi-download me-1"></i> Export Distribution CSV
+      </a>
+    </div>
+    <p class="text-muted small mt-2 mb-0">Exports contain PII-masked names and emails.</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     Inline chart + table data (passed from Go template)
+============================================================= -->
+<script>
+(function () {
+  // --- Orders by Status bar chart ---
+  const statusData = {
+    {{range $status, $count := .OrdersByStatus}}"{{$status}}": {{$count}},
+    {{end}}
+  };
+
+  const topMaterials = [
+    {{range .TopMaterials}}
+    { title: {{printf "%q" .Title}}, orders: {{.OrderCount}}, rating: {{printf "%.1f" .AvgRating}} },
+    {{end}}
+  ];
+
+  const inventory = [
+    {{range .Inventory}}
+    { id: {{.MaterialID}}, title: {{printf "%q" .Title}}, total: {{.TotalQty}}, available: {{.AvailableQty}}, reserved: {{.ReservedQty}} },
+    {{end}}
+  ];
+
+  // Simple canvas bar chart helper
+  function drawBarChart(canvasID, labels, values, color) {
+    const canvas = document.getElementById(canvasID);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const pad = { top: 20, right: 20, bottom: 50, left: 50 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+    const maxVal = Math.max(...values, 1);
+    const barW = chartW / labels.length * 0.7;
+    const gap   = chartW / labels.length * 0.3;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f4f6fa';
+    ctx.fillRect(0, 0, W, H);
+
+    // Axes
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + chartH);
+    ctx.lineTo(pad.left + chartW, pad.top + chartH);
+    ctx.stroke();
+
+    // Bars
+    labels.forEach(function (label, i) {
+      const x = pad.left + i * (barW + gap) + gap / 2;
+      const barH = (values[i] / maxVal) * chartH;
+      const y = pad.top + chartH - barH;
+
+      ctx.fillStyle = color || '#4a6cf7';
+      ctx.fillRect(x, y, barW, barH);
+
+      // Value label above bar
+      ctx.fillStyle = '#333';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(values[i], x + barW / 2, y - 4);
+
+      // X-axis label
+      ctx.save();
+      ctx.translate(x + barW / 2, pad.top + chartH + 10);
+      ctx.rotate(-0.4);
+      ctx.textAlign = 'right';
+      ctx.font = '10px sans-serif';
+      ctx.fillStyle = '#555';
+      ctx.fillText(label, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  // Draw orders-by-status chart
+  window.addEventListener('DOMContentLoaded', function () {
+    const statusLabels = Object.keys(statusData);
+    const statusValues = statusLabels.map(function (k) { return statusData[k]; });
+    drawBarChart('statusChart', statusLabels, statusValues, '#4a6cf7');
+
+    // Draw top-materials chart
+    if (topMaterials.length > 0) {
+      const matLabels = topMaterials.map(function (m) { return m.title.substring(0, 20); });
+      const matValues = topMaterials.map(function (m) { return m.orders; });
+      drawBarChart('topMaterialsChart', matLabels, matValues, '#22c55e');
+    }
+  });
+
+  // Alpine.js component for sortable/filterable inventory table
+  window.inventoryTable = function () {
+    return {
+      rows: inventory,
+      search: '',
+      sortKey: 'title',
+      sortDir: 1,
+      sortBy: function (key) {
+        if (this.sortKey === key) {
+          this.sortDir *= -1;
+        } else {
+          this.sortKey = key;
+          this.sortDir = 1;
+        }
+      },
+      sortClass: function (key) {
+        if (this.sortKey !== key) return '';
+        return this.sortDir === 1 ? 'sort-asc' : 'sort-desc';
+      },
+      filteredRows: function () {
+        const q = this.search.toLowerCase();
+        const key = this.sortKey;
+        const dir = this.sortDir;
+        return this.rows
+          .filter(function (r) { return r.title.toLowerCase().includes(q); })
+          .sort(function (a, b) {
+            const av = a[key], bv = b[key];
+            if (av < bv) return -dir;
+            if (av > bv) return dir;
+            return 0;
+          });
+      }
+    };
+  };
+})();
+</script>

@@ -1,0 +1,46 @@
+<div class="card" id="rating-widget">
+  <div class="card-body">
+    <h5 class="card-title">Rating</h5>
+
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="fw-semibold">{{.AvgRating}}</span>
+      <span aria-label="{{.AvgRating}} out of 5 stars">
+        <i class="bi bi-star-fill text-warning"></i>
+        <i class="bi bi-star-fill text-warning"></i>
+        <i class="bi bi-star-fill text-warning"></i>
+        <i class="bi bi-star-fill text-warning"></i>
+        <i class="bi bi-star-fill text-warning"></i>
+      </span>
+      <small class="text-muted">({{.RatingCount}} {{if eq .RatingCount 1}}rating{{else}}ratings{{end}})</small>
+    </div>
+
+    {{if .User}}
+    <div>
+      <label class="form-label small" for="star-select-{{.MaterialID}}">Your rating</label>
+      <select
+        id="star-select-{{.MaterialID}}"
+        class="form-select form-select-sm w-auto"
+        name="stars"
+        aria-label="Rate this material"
+        hx-post="/materials/{{.MaterialID}}/rate"
+        hx-target="#rating-widget"
+        hx-swap="outerHTML"
+        hx-trigger="change"
+        hx-indicator="#rating-indicator-{{.MaterialID}}">
+        <option value="">— Rate —</option>
+        <option value="1" {{if eq .UserStars 1}}selected{{end}}>1 — Poor</option>
+        <option value="2" {{if eq .UserStars 2}}selected{{end}}>2 — Fair</option>
+        <option value="3" {{if eq .UserStars 3}}selected{{end}}>3 — Good</option>
+        <option value="4" {{if eq .UserStars 4}}selected{{end}}>4 — Very Good</option>
+        <option value="5" {{if eq .UserStars 5}}selected{{end}}>5 — Excellent</option>
+      </select>
+      <span id="rating-indicator-{{.MaterialID}}" class="htmx-indicator ms-2">
+        <span class="spinner-border spinner-border-sm text-secondary" role="status"></span>
+      </span>
+    </div>
+    {{else}}
+    <p class="text-muted small mb-0"><a href="/login">Sign in</a> to rate this material.</p>
+    {{end}}
+
+  </div>
+</div>

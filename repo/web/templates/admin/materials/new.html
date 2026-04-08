@@ -1,0 +1,125 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">Add Material</h2>
+  <a class="btn btn-outline-secondary btn-sm" href="/materials">
+    <i class="bi bi-arrow-left me-1"></i>Back to Materials
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form
+      id="new-material-form"
+      method="POST"
+      action="/admin/materials"
+      hx-post="/admin/materials"
+      hx-target="#new-material-form"
+      hx-swap="outerHTML"
+      novalidate>
+
+      {{if .Error}}
+      <div class="alert alert-danger py-2 mb-3" role="alert">
+        <i class="bi bi-exclamation-triangle me-1"></i>{{.Error}}
+      </div>
+      {{end}}
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-8">
+          <label class="form-label" for="mat-title">Title <span class="text-danger">*</span></label>
+          <input class="form-control" type="text" id="mat-title" name="title"
+            value="{{if .Material}}{{.Material.Title}}{{end}}" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="mat-isbn">ISBN</label>
+          <input class="form-control" type="text" id="mat-isbn" name="isbn"
+            value="{{if .Material}}{{if .Material.ISBN}}{{.Material.ISBN}}{{end}}{{end}}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label" for="mat-author">Author</label>
+          <input class="form-control" type="text" id="mat-author" name="author"
+            value="{{if .Material}}{{if .Material.Author}}{{.Material.Author}}{{end}}{{end}}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="mat-publisher">Publisher</label>
+          <input class="form-control" type="text" id="mat-publisher" name="publisher"
+            value="{{if .Material}}{{if .Material.Publisher}}{{.Material.Publisher}}{{end}}{{end}}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="mat-edition">Edition</label>
+          <input class="form-control" type="text" id="mat-edition" name="edition"
+            value="{{if .Material}}{{if .Material.Edition}}{{.Material.Edition}}{{end}}{{end}}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label" for="mat-subject">Subject</label>
+          <select class="form-select" id="mat-subject" name="subject">
+            <option value="">— Select —</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="English">English</option>
+            <option value="History">History</option>
+            <option value="Art">Art</option>
+            <option value="Music">Music</option>
+            <option value="Physical Education">Physical Education</option>
+            <option value="Technology">Technology</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="mat-grade">Grade Level</label>
+          <select class="form-select" id="mat-grade" name="grade_level">
+            <option value="">— Select —</option>
+            <option value="K">Kindergarten</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label" for="mat-total-qty">Total Qty <span class="text-danger">*</span></label>
+          <input class="form-control" type="number" id="mat-total-qty" name="total_qty" min="0"
+            value="{{if .Material}}{{.Material.TotalQty}}{{else}}0{{end}}" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="mat-avail-qty">Available Qty <span class="text-danger">*</span></label>
+          <input class="form-control" type="number" id="mat-avail-qty" name="available_qty" min="0"
+            value="{{if .Material}}{{.Material.AvailableQty}}{{else}}0{{end}}" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="mat-status">Status</label>
+          <select class="form-select" id="mat-status" name="status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit"
+          hx-on::before-request="this.disabled=true"
+          hx-on::after-request="this.disabled=false">
+          <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+          <i class="bi bi-plus-lg me-1"></i>Add Material
+        </button>
+        <a class="btn btn-outline-secondary" href="/materials">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>

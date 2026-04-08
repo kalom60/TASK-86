@@ -1,0 +1,44 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-1">{{.List.Name}}</h2>
+    <p class="text-muted mb-0 small">
+      Shared favorites list
+      {{if .List.Owner}} &mdash; by {{.List.Owner}}{{end}}
+      {{if .List.ExpiresAt}} &mdash; expires {{.List.ExpiresAt}}{{end}}
+    </p>
+  </div>
+</div>
+
+{{if .Items}}
+<div class="material-grid">
+  {{range .Items}}
+  {{if .Material}}
+  <div class="card h-100">
+    <div class="card-body d-flex flex-column">
+      <h3 class="card-title h6 mb-1">
+        <a class="stretched-link text-decoration-none" href="/materials/{{.Material.ID}}">{{.Material.Title}}</a>
+      </h3>
+      {{if .Material.Author}}
+      <p class="card-text text-muted small mb-2">{{.Material.Author}}</p>
+      {{end}}
+      {{if .Material.Subject}}
+      <span class="badge bg-primary mb-2 align-self-start">{{.Material.Subject}}</span>
+      {{end}}
+      <div class="mt-auto">
+        {{if gt .Material.AvailableQty 0}}
+        <span class="badge bg-success">Available</span>
+        {{else}}
+        <span class="badge bg-danger">Out of Stock</span>
+        {{end}}
+      </div>
+    </div>
+  </div>
+  {{end}}
+  {{end}}
+</div>
+{{else}}
+<div class="text-center text-muted py-5">
+  <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+  <p>This list has no items.</p>
+</div>
+{{end}}

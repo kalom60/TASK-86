@@ -1,0 +1,40 @@
+{{define "content"}}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/courses">My Courses</a></li>
+    <li class="breadcrumb-item active" aria-current="page">New Course</li>
+  </ol>
+</nav>
+
+<div class="card">
+  <div class="card-header"><h5 class="mb-0">Create Course</h5></div>
+  <div class="card-body">
+    <form method="POST" action="/courses">
+      <div class="mb-3">
+        <label class="form-label" for="course-name">Course Name <span class="text-danger">*</span></label>
+        <input class="form-control" id="course-name" name="name" required maxlength="200"
+               placeholder="e.g. Algebra I — Period 2">
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label" for="course-subject">Subject</label>
+          <input class="form-control" id="course-subject" name="subject" maxlength="100">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="course-grade">Grade Level</label>
+          <input class="form-control" id="course-grade" name="grade_level" maxlength="20">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="course-year">Academic Year</label>
+          <input class="form-control" id="course-year" name="academic_year" maxlength="20"
+                 placeholder="e.g. 2025-2026">
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Create Course</button>
+        <a class="btn btn-outline-secondary" href="/courses">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{end}}

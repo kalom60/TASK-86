@@ -1,0 +1,137 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">Notification Settings</h2>
+    <p class="text-muted small mb-0">Configure Do-Not-Disturb hours and topic subscriptions</p>
+  </div>
+</div>
+
+<!-- ================================================================
+     Do-Not-Disturb Settings
+================================================================ -->
+<div class="card mb-4">
+  <div class="card-header fw-semibold d-flex align-items-center gap-2">
+    <i class="bi bi-moon-stars me-1"></i> Do-Not-Disturb (UTC)
+    {{if .DND}}
+    <span class="badge bg-warning text-dark ms-auto">Active: {{.DND.StartHour}}:00 &ndash; {{.DND.EndHour}}:00 UTC</span>
+    {{else}}
+    <span class="badge bg-secondary ms-auto">Not configured</span>
+    {{end}}
+  </div>
+  <div class="card-body">
+
+    {{if .DND}}
+    <p class="small text-muted mb-3">
+      Currently set: <strong>{{.DND.StartHour}}:00</strong> &ndash; <strong>{{.DND.EndHour}}:00</strong> UTC
+    </p>
+    {{else}}
+    <p class="small text-muted mb-3">No DND window configured.</p>
+    {{end}}
+
+    <form
+      hx-post="/inbox/settings/dnd"
+      hx-target="#dnd-flash"
+      hx-swap="innerHTML">
+
+      <div id="dnd-flash" class="mb-3"></div>
+
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-auto">
+          <label class="form-label" for="start_hour">Start Hour</label>
+          <select class="form-select form-select-sm w-auto d-inline" id="start_hour" name="start_hour">
+            {{range $h := hourRange}}
+            <option value="{{$h.Val}}"
+              {{if and $.DND (eq $.DND.StartHour $h.Val)}}selected{{end}}>
+              {{$h.Label}}
+            </option>
+            {{end}}
+          </select>
+        </div>
+
+        <div class="col-auto">
+          <label class="form-label" for="end_hour">End Hour</label>
+          <select class="form-select form-select-sm w-auto d-inline" id="end_hour" name="end_hour">
+            {{range $h := hourRange}}
+            <option value="{{$h.Val}}"
+              {{if and $.DND (eq $.DND.EndHour $h.Val)}}selected{{end}}>
+              {{$h.Label}}
+            </option>
+            {{end}}
+          </select>
+        </div>
+      </div>
+
+      <p class="form-text text-muted mb-3">
+        Notifications received during this window will be held and delivered when the window ends.
+        Set start = end to disable DND.
+      </p>
+
+      <button class="btn btn-primary" type="submit"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+        <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+        Save DND Hours
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================
+     Topic Subscriptions
+================================================================ -->
+<div class="card">
+  <div class="card-header fw-semibold">Topic Subscriptions</div>
+  <div class="card-body">
+    <p class="text-muted small mb-3">Choose which categories of notifications you want to receive.</p>
+
+    <div id="sub-flash" class="mb-3"></div>
+
+    <ul class="list-group">
+      {{range .Topics}}
+      {{$topic := .Key}}
+      {{$label := .Label}}
+      {{$active := index $.SubMap $topic}}
+
+      <li class="list-group-item d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <span>{{$label}}</span>
+          {{if $active}}
+          <span class="badge bg-success">Subscribed</span>
+          {{else}}
+          <span class="badge bg-secondary">Not subscribed</span>
+          {{end}}
+        </div>
+
+        <div>
+          {{if $active}}
+          <form
+            hx-post="/inbox/unsubscribe"
+            hx-target="#sub-flash"
+            hx-swap="innerHTML">
+            <input type="hidden" name="topic" value="{{$topic}}">
+            <button class="btn btn-outline-secondary btn-sm" type="submit"
+                    hx-on::before-request="this.disabled=true"
+                    hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              Unsubscribe
+            </button>
+          </form>
+          {{else}}
+          <form
+            hx-post="/inbox/subscribe"
+            hx-target="#sub-flash"
+            hx-swap="innerHTML">
+            <input type="hidden" name="topic" value="{{$topic}}">
+            <button class="btn btn-primary btn-sm" type="submit"
+                    hx-on::before-request="this.disabled=true"
+                    hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              Subscribe
+            </button>
+          </form>
+          {{end}}
+        </div>
+      </li>
+      {{end}}
+    </ul>
+  </div>
+</div>

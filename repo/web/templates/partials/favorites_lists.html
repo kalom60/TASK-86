@@ -1,0 +1,23 @@
+<div id="favorites-lists">
+  {{if .Lists}}
+  <ul class="list-group">
+    {{range .Lists}}
+    <li class="list-group-item d-flex align-items-center justify-content-between" id="list-{{.ID}}">
+      <div class="d-flex align-items-center gap-2">
+        <span>{{.Name}}</span>
+        {{if eq .Visibility "public"}}
+        <span class="badge bg-primary">public</span>
+        {{else}}
+        <span class="badge bg-secondary">private</span>
+        {{end}}
+      </div>
+      <a class="btn btn-outline-primary btn-sm" href="/favorites/{{.ID}}/share">
+        <i class="bi bi-share me-1"></i>Share
+      </a>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="text-muted">No favorites lists yet.</p>
+  {{end}}
+</div>

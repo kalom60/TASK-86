@@ -1,0 +1,70 @@
+{{define "admin/users/new"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">Create New User</h2>
+  <a href="/admin/users" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i> Back to Users
+  </a>
+</div>
+
+{{if .Error}}
+<div class="alert alert-danger" role="alert">
+  {{.Error}}
+</div>
+{{end}}
+
+<div class="card">
+  <div class="card-body">
+    <form method="POST" action="/admin/users" class="row g-3">
+
+      <div class="col-12">
+        <label for="full_name" class="form-label">Full Name</label>
+        <input type="text" id="full_name" name="full_name"
+               class="form-control" placeholder="e.g. Jane Smith">
+        <div class="form-text text-muted">Used for duplicate-user detection. Optional but recommended.</div>
+      </div>
+
+      <div class="col-12">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" required
+               class="form-control">
+      </div>
+
+      <div class="col-12">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" required
+               class="form-control">
+      </div>
+
+      <div class="col-12">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" required minlength="12"
+               class="form-control">
+        <div class="form-text text-muted">Minimum 12 characters.</div>
+      </div>
+
+      <div class="col-12">
+        <label for="role" class="form-label">Role</label>
+        <select id="role" name="role" class="form-select">
+          <option value="student">Student</option>
+          <option value="instructor">Instructor</option>
+          <option value="clerk">Clerk</option>
+          <option value="moderator">Moderator</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2 pt-2">
+        <button type="submit"
+                class="btn btn-primary"
+                hx-on::before-request="this.disabled=true"
+                hx-on::after-request="this.disabled=false">
+          <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+          Create User
+        </button>
+        <a href="/admin/users" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{{end}}

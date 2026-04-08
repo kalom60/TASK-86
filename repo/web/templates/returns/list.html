@@ -1,0 +1,70 @@
+{{define "content"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">My Returns &amp; Refunds</h2>
+</div>
+
+{{if .Requests}}
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle" aria-label="Return requests">
+    <thead>
+      <tr>
+        <th scope="col">Request #</th>
+        <th scope="col">Order #</th>
+        <th scope="col">Type</th>
+        <th scope="col">Reason</th>
+        <th scope="col">Requested</th>
+        <th scope="col">Status</th>
+        <th scope="col">Resolved</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Requests}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>
+          <a href="/orders/{{.OrderID}}">#{{.OrderID}}</a>
+        </td>
+        <td>
+          {{if eq .Type "return"}}
+          <span class="badge bg-primary">Return</span>
+          {{else if eq .Type "exchange"}}
+          <span class="badge bg-info text-dark">Exchange</span>
+          {{else if eq .Type "refund"}}
+          <span class="badge bg-secondary">Refund</span>
+          {{else}}
+          <span class="badge bg-secondary">{{.Type}}</span>
+          {{end}}
+        </td>
+        <td>
+          {{if .Reason}}{{.Reason}}{{else}}<span class="text-muted">—</span>{{end}}
+        </td>
+        <td>{{.RequestedAt}}</td>
+        <td>
+          {{if eq .Status "pending"}}
+          <span class="badge bg-warning text-dark">Pending</span>
+          {{else if eq .Status "approved"}}
+          <span class="badge bg-success">Approved</span>
+          {{else if eq .Status "completed"}}
+          <span class="badge bg-success">Completed</span>
+          {{else if eq .Status "rejected"}}
+          <span class="badge bg-danger">Rejected</span>
+          {{else}}
+          <span class="badge bg-secondary">{{.Status}}</span>
+          {{end}}
+        </td>
+        <td>
+          {{if .ResolvedAt}}{{.ResolvedAt}}{{else}}<span class="text-muted">—</span>{{end}}
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="text-center py-5">
+  <i class="bi bi-arrow-return-left fs-1 text-muted d-block mb-3" aria-hidden="true"></i>
+  <p class="text-muted mb-3">You have no return or refund requests.</p>
+  <a class="btn btn-outline-secondary" href="/orders">View Orders</a>
+</div>
+{{end}}
+{{end}}

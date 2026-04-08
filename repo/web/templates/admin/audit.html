@@ -1,0 +1,92 @@
+{{define "admin/audit"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">{{.Title}}</h2>
+</div>
+
+{{if .EntityType}}
+<p class="text-muted small mb-3">
+  Showing audit trail for <strong>{{.EntityType}}</strong> #{{.EntityID}}
+  &mdash; <a href="/admin/audit">View all</a>
+</p>
+{{end}}
+
+{{/* Filter form */}}
+<form method="GET" action="/admin/audit" class="row g-2 align-items-end mb-4">
+  <div class="col-auto">
+    <label class="form-label form-label-sm mb-1">Entity Type</label>
+    <input type="text" name="entity_type" value="{{.EntityType}}"
+           placeholder="user, material, order…"
+           class="form-control form-control-sm">
+  </div>
+  <div class="col-auto">
+    <label class="form-label form-label-sm mb-1">Entity ID</label>
+    <input type="number" name="entity_id" value="{{.EntityID}}"
+           placeholder="ID"
+           class="form-control form-control-sm" style="width:100px;">
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-primary btn-sm">
+      <i class="bi bi-funnel me-1"></i>Filter
+    </button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Actor</th>
+        <th>Action</th>
+        <th>Entity</th>
+        <th>Before / After</th>
+        <th>IP</th>
+        <th>When</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Logs}}
+      <tr>
+        <td class="font-monospace small">
+          {{if .ActorID}}#{{.ActorID}}{{else}}<span class="text-muted">system</span>{{end}}
+        </td>
+        <td>
+          <span class="badge bg-secondary">{{.Action}}</span>
+        </td>
+        <td class="small text-muted">
+          {{.EntityType}}{{if .EntityID}} #{{.EntityID}}{{end}}
+        </td>
+        <td class="small">
+          {{if or .BeforeData .AfterData}}
+          {{$collapseID := printf "diff-%v" .ID}}
+          <button class="btn btn-link btn-sm p-0"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#{{$collapseID}}"
+                  aria-expanded="false"
+                  aria-controls="{{$collapseID}}">
+            Show diff
+          </button>
+          <div class="collapse mt-1" id="{{$collapseID}}">
+            <div class="bg-light rounded p-2 font-monospace small" style="max-width:320px;overflow:auto;">
+              {{if .BeforeData}}<div class="text-danger mb-1"><strong>Before:</strong> {{.BeforeData}}</div>{{end}}
+              {{if .AfterData}}<div class="text-success"><strong>After:</strong> {{.AfterData}}</div>{{end}}
+            </div>
+          </div>
+          {{else}}
+          <span class="text-muted">—</span>
+          {{end}}
+        </td>
+        <td class="small text-muted font-monospace">
+          {{if .IP}}{{.IP}}{{else}}—{{end}}
+        </td>
+        <td class="small text-muted">{{.CreatedAt}}</td>
+      </tr>
+      {{else}}
+      <tr>
+        <td colspan="6" class="text-center text-muted py-4">No audit log entries found.</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{end}}

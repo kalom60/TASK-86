@@ -1,0 +1,72 @@
+{{define "partials/moderation_items"}}
+{{if .Items}}
+{{range .Items}}
+<div class="card mb-3" id="mod-item-{{.Comment.ID}}">
+
+  <div class="card-header d-flex align-items-start justify-content-between flex-wrap gap-2">
+    <div>
+      <span class="fw-semibold me-2">
+        <i class="bi bi-book me-1 text-muted"></i>{{.MaterialTitle}}
+      </span>
+      <span class="text-muted small">
+        by <strong>{{.AuthorName}}</strong>
+      </span>
+      <span class="text-muted small ms-2">{{.Comment.CreatedAt}}</span>
+    </div>
+    <span class="badge bg-danger">
+      <i class="bi bi-flag me-1"></i>{{.ReportCount}} report{{if ne .ReportCount 1}}s{{end}}
+    </span>
+  </div>
+
+  <div class="card-body">
+    {{if .Reporters}}
+    <p class="small text-muted mb-2">
+      Reported by:
+      {{range $i, $r := .Reporters}}
+      <span class="badge bg-secondary me-1">{{$r}}</span>
+      {{end}}
+    </p>
+    {{end}}
+
+    <blockquote class="blockquote mb-0">
+      <p class="mb-0 fs-6">{{.Comment.Body}}</p>
+    </blockquote>
+  </div>
+
+  <div class="card-footer d-flex gap-2">
+    <button
+      type="button"
+      class="btn btn-success btn-sm"
+      hx-post="/moderation/{{.Comment.ID}}/approve"
+      hx-target="#mod-item-{{.Comment.ID}}"
+      hx-swap="outerHTML"
+      hx-confirm="Approve this comment?"
+      hx-on::before-request="this.disabled=true"
+      hx-on::after-request="this.disabled=false">
+      <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+      <i class="bi bi-check-lg me-1"></i> Approve
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-danger btn-sm"
+      hx-post="/moderation/{{.Comment.ID}}/remove"
+      hx-target="#mod-item-{{.Comment.ID}}"
+      hx-swap="outerHTML"
+      hx-confirm="Remove this comment permanently?"
+      hx-on::before-request="this.disabled=true"
+      hx-on::after-request="this.disabled=false">
+      <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+      <i class="bi bi-trash me-1"></i> Remove
+    </button>
+  </div>
+
+</div>
+{{end}}
+{{else}}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-shield-check fs-1 d-block mb-2 text-success opacity-50"></i>
+  <p class="fw-semibold mb-1">Queue is clear</p>
+  <p class="small mb-0">No comments are awaiting review.</p>
+</div>
+{{end}}
+{{end}}

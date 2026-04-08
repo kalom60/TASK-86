@@ -1,0 +1,42 @@
+{{if .Materials}}
+<div class="material-grid">
+  {{range .Materials}}
+  <div class="card h-100">
+    <div class="card-body d-flex flex-column">
+      <h3 class="card-title h6 mb-1">
+        <a class="stretched-link text-decoration-none" href="/materials/{{.ID}}">{{.Title}}</a>
+      </h3>
+      {{if .Author}}
+      <p class="card-text text-muted small mb-2">{{.Author}}</p>
+      {{end}}
+      <div class="mb-2">
+        {{if .Subject}}
+        <span class="badge bg-primary me-1">{{.Subject}}</span>
+        {{end}}
+        {{if .GradeLevel}}
+        <span class="badge bg-info text-dark me-1">Grade {{.GradeLevel}}</span>
+        {{end}}
+      </div>
+      <div class="mt-auto d-flex align-items-center justify-content-between">
+        {{if gt .AvailableQty 0}}
+        <span class="badge bg-success">Available ({{.AvailableQty}})</span>
+        {{else}}
+        <span class="badge bg-danger">Out of Stock</span>
+        {{end}}
+        <span class="badge bg-secondary">{{.Status}}</span>
+      </div>
+    </div>
+  </div>
+  {{end}}
+</div>
+{{else}}
+<div class="text-center text-muted py-5">
+  <i class="bi bi-search fs-1 d-block mb-3"></i>
+  <p class="mb-1">No materials found.</p>
+  {{if .Query}}
+  <p class="small">Try a different search term or clear the filters.</p>
+  {{else}}
+  <p class="small">No materials are currently available in the catalog.</p>
+  {{end}}
+</div>
+{{end}}

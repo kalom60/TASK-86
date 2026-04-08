@@ -1,0 +1,80 @@
+{{define "content"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">My Orders</h2>
+</div>
+
+{{if .Error}}
+<div class="alert alert-danger" role="alert">{{.Error}}</div>
+{{end}}
+
+{{if .Orders}}
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle" aria-label="Your orders">
+    <thead>
+      <tr>
+        <th scope="col">Order #</th>
+        <th scope="col">Date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Orders}}
+      <tr id="order-row-{{.ID}}">
+
+        <td>
+          <a href="/orders/{{.ID}}">#{{.ID}}</a>
+        </td>
+
+        <td>{{.CreatedAt}}</td>
+
+        <td>
+          {{template "partials/order_status_badge" .}}
+        </td>
+
+        <td>${{printf "%.2f" .TotalAmount}}</td>
+
+        <td>
+          <div class="d-flex gap-1 flex-wrap">
+            <a class="btn btn-outline-secondary btn-sm" href="/orders/{{.ID}}">View</a>
+
+            {{if eq .Status "pending_payment"}}
+            <button
+              class="btn btn-primary btn-sm"
+              hx-post="/orders/{{.ID}}/pay"
+              hx-target="#order-row-{{.ID}} .badge"
+              hx-swap="outerHTML"
+              hx-confirm="Confirm payment for order #{{.ID}}?"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              Pay Now
+            </button>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              hx-post="/orders/{{.ID}}/cancel"
+              hx-target="#order-row-{{.ID}} .badge"
+              hx-swap="outerHTML"
+              hx-confirm="Cancel order #{{.ID}}?"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              Cancel
+            </button>
+            {{end}}
+          </div>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+{{else}}
+<div class="text-center py-5">
+  <i class="bi bi-cart-x fs-1 text-muted d-block mb-3" aria-hidden="true"></i>
+  <p class="text-muted mb-3">You haven't placed any orders yet.</p>
+  <a class="btn btn-primary" href="/materials">Browse Materials</a>
+</div>
+{{end}}
+{{end}}

@@ -1,0 +1,67 @@
+{{define "partials/inbox_items"}}
+{{if .Notifications}}
+<ul class="list-group" aria-label="Notifications">
+  {{range .Notifications}}
+  <li
+    class="list-group-item list-group-item-action{{if not .ReadAt}} fw-semibold{{else}} text-muted{{end}}"
+    id="notif-{{.ID}}">
+
+    <div class="d-flex align-items-start gap-3">
+
+      <div class="fs-4 flex-shrink-0 mt-1" aria-hidden="true">
+        {{if eq .Type "order"}}<i class="bi bi-cart text-primary"></i>
+        {{else if eq .Type "return"}}<i class="bi bi-arrow-return-left text-secondary"></i>
+        {{else if eq .Type "distribution"}}<i class="bi bi-box-seam text-warning"></i>
+        {{else if eq .Type "moderation"}}<i class="bi bi-shield-exclamation text-danger"></i>
+        {{else if eq .Type "announcement"}}<i class="bi bi-megaphone text-info"></i>
+        {{else}}<i class="bi bi-bell text-muted"></i>
+        {{end}}
+      </div>
+
+      <div class="flex-grow-1 min-w-0">
+        <p class="mb-1">{{.Title}}</p>
+        {{if .Body}}
+        <p class="mb-1 small text-muted fw-normal">{{.Body}}</p>
+        {{end}}
+        <p class="mb-0 small text-muted fw-normal">{{.CreatedAt}}
+          {{if .ReadAt}}<span class="ms-2 text-success"><i class="bi bi-check2"></i> Read</span>{{end}}
+        </p>
+      </div>
+
+      <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+        {{if .RefID}}
+          {{if eq (deref .RefType) "order"}}
+          <a class="btn btn-link btn-sm p-0" href="/orders/{{.RefID}}">View Order</a>
+          {{else if eq (deref .RefType) "return"}}
+          <a class="btn btn-link btn-sm p-0" href="/returns">View Return</a>
+          {{else if eq (deref .RefType) "material"}}
+          <a class="btn btn-link btn-sm p-0" href="/materials/{{.RefID}}">View Material</a>
+          {{end}}
+        {{end}}
+
+        {{if not .ReadAt}}
+        <button
+          type="button"
+          class="btn btn-link btn-sm p-0"
+          hx-post="/inbox/{{.ID}}/read"
+          hx-target="#inbox-badge"
+          hx-swap="outerHTML"
+          hx-on::after-request="document.getElementById('notif-{{.ID}}').classList.remove('fw-semibold'); document.getElementById('notif-{{.ID}}').classList.add('text-muted')"
+          hx-on::before-request="this.disabled=true"
+          hx-on::after-request="this.disabled=false">
+          <i class="bi bi-check2"></i> Mark Read
+        </button>
+        {{end}}
+      </div>
+
+    </div>
+  </li>
+  {{end}}
+</ul>
+{{else}}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-bell-slash fs-1 d-block mb-2 opacity-25"></i>
+  <p class="mb-0">No notifications</p>
+</div>
+{{end}}
+{{end}}

@@ -1,0 +1,96 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">Materials Catalog</h2>
+  <p class="text-muted mb-0 small">Search and browse available district materials</p>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-6">
+        <label class="form-label" for="search-q">Search</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <input
+            class="form-control"
+            type="search"
+            id="search-q"
+            name="q"
+            placeholder="Title, author, ISBN…"
+            hx-get="/materials/search"
+            hx-trigger="keyup changed delay:300ms, search"
+            hx-target="#material-results"
+            hx-include="[name='q'],[name='subject'],[name='grade']"
+            hx-indicator="#search-indicator"
+            autocomplete="off">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label" for="filter-subject">Subject</label>
+        <select
+          class="form-select"
+          id="filter-subject"
+          name="subject"
+          hx-get="/materials/search"
+          hx-trigger="change"
+          hx-target="#material-results"
+          hx-include="[name='q'],[name='subject'],[name='grade']"
+          hx-indicator="#search-indicator">
+          <option value="">All Subjects</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Science">Science</option>
+          <option value="English">English</option>
+          <option value="History">History</option>
+          <option value="Art">Art</option>
+          <option value="Music">Music</option>
+          <option value="Physical Education">Physical Education</option>
+          <option value="Technology">Technology</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label" for="filter-grade">Grade Level</label>
+        <select
+          class="form-select"
+          id="filter-grade"
+          name="grade"
+          hx-get="/materials/search"
+          hx-trigger="change"
+          hx-target="#material-results"
+          hx-include="[name='q'],[name='subject'],[name='grade']"
+          hx-indicator="#search-indicator">
+          <option value="">All Grades</option>
+          <option value="K">Kindergarten</option>
+          <option value="1">Grade 1</option>
+          <option value="2">Grade 2</option>
+          <option value="3">Grade 3</option>
+          <option value="4">Grade 4</option>
+          <option value="5">Grade 5</option>
+          <option value="6">Grade 6</option>
+          <option value="7">Grade 7</option>
+          <option value="8">Grade 8</option>
+          <option value="9">Grade 9</option>
+          <option value="10">Grade 10</option>
+          <option value="11">Grade 11</option>
+          <option value="12">Grade 12</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-2">
+      <span id="search-indicator" class="htmx-indicator">
+        <span class="spinner-border spinner-border-sm text-secondary" role="status" aria-label="Searching…"></span>
+        <span class="text-muted small ms-1">Searching…</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div
+  id="material-results"
+  hx-get="/materials/search"
+  hx-trigger="load"
+  hx-indicator="#search-indicator"
+  hx-on::response-error="this.innerHTML='<div class=\'text-center py-5\'><i class=\'bi bi-exclamation-triangle text-danger fs-2\'></i><p class=\'mt-2 text-muted\'>Failed to load materials. Please refresh the page.</p></div>'">
+  <div class="skeleton" style="height:200px"></div>
+</div>

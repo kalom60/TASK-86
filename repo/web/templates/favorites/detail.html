@@ -1,0 +1,63 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">{{.List.Name}}</h2>
+    <span class="badge {{if eq .List.Visibility "public"}}bg-primary{{else}}bg-secondary{{end}} mt-1">
+      {{.List.Visibility}}
+    </span>
+  </div>
+  <a class="btn btn-outline-secondary btn-sm" href="/favorites">
+    <i class="bi bi-arrow-left me-1"></i>Back to Lists
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="fw-semibold">Items</span>
+    <button
+      class="btn btn-outline-primary btn-sm"
+      hx-get="/favorites/{{.ListID}}/share"
+      hx-target="#share-panel"
+      hx-swap="innerHTML"
+      type="button"
+      hx-on::before-request="this.disabled=true"
+      hx-on::after-request="this.disabled=false">
+      <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+      <i class="bi bi-share me-1"></i>Share
+    </button>
+  </div>
+  <div class="card-body">
+    <div id="share-panel" class="mb-3"></div>
+
+    <div id="favorites-items-{{.ListID}}">
+      {{if .Items}}
+      <ul class="list-group list-group-flush">
+        {{range .Items}}
+        <li class="list-group-item d-flex align-items-center justify-content-between" id="fav-item-{{.ID}}">
+          <div>
+            <a class="text-decoration-none" href="/materials/{{.MaterialID}}">Material #{{.MaterialID}}</a>
+            <small class="text-muted ms-2">Added {{.AddedAt}}</small>
+          </div>
+          <form
+            hx-delete="/favorites/{{$.ListID}}/items/{{.MaterialID}}"
+            hx-target="#favorites-items-{{$.ListID}}"
+            hx-swap="outerHTML">
+            <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Remove from list"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </form>
+        </li>
+        {{end}}
+      </ul>
+      {{else}}
+      <div class="text-center text-muted py-4">
+        <i class="bi bi-heart fs-1 d-block mb-3"></i>
+        <p class="mb-0">This list has no items yet.</p>
+        <p class="small">Browse the <a href="/materials">catalog</a> and add materials to this list.</p>
+      </div>
+      {{end}}
+    </div>
+  </div>
+</div>

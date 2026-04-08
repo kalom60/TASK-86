@@ -1,0 +1,182 @@
+<!-- distribution/reissue_form.html — reissue a lost or damaged copy -->
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">Reissue Copy</h2>
+    <p class="text-muted small mb-0">Replace a lost or damaged physical copy with a new one</p>
+  </div>
+  <a class="btn btn-outline-secondary btn-sm" href="/distribution">
+    <i class="bi bi-arrow-left me-1"></i> Back to Pick List
+  </a>
+</div>
+
+<!-- Reissue form with Alpine-driven two-step wizard -->
+<div
+  class="mx-auto" style="max-width:560px;"
+  x-data="{
+    step: 'form',
+    oldScanID: '',
+    newScanID: '',
+    reason: '',
+    orderID: '',
+    materialID: '',
+    confirm() {
+      if (!this.oldScanID || !this.newScanID || !this.reason || !this.orderID) return;
+      this.step = 'confirm';
+    },
+    back() { this.step = 'form'; }
+  }">
+
+  <!-- Step indicators -->
+  <nav class="nav nav-pills justify-content-center mb-4" aria-label="Wizard steps">
+    <a class="nav-link" :class="step === 'form' ? 'active' : 'text-muted'" href="#">
+      <i class="bi bi-1-circle me-1"></i> Enter Details
+    </a>
+    <a class="nav-link" :class="step === 'confirm' ? 'active' : 'text-muted'" href="#">
+      <i class="bi bi-2-circle me-1"></i> Confirm
+    </a>
+  </nav>
+
+  <!-- ===== Step 1: data entry ===== -->
+  <div x-show="step === 'form'">
+    <div class="card">
+      <div class="card-header fw-semibold">Step 1 — Enter Copy Details</div>
+      <div class="card-body">
+
+        <div class="mb-3">
+          <label class="form-label" for="ri-order-id">Order Reference #</label>
+          <input
+            id="ri-order-id"
+            class="form-control"
+            type="number"
+            min="1"
+            placeholder="e.g. 1042"
+            x-model="orderID"
+            required>
+          <div class="form-text text-muted">The order this copy was originally issued under.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="ri-material-id">Material ID</label>
+          <input
+            id="ri-material-id"
+            class="form-control"
+            type="number"
+            min="1"
+            placeholder="e.g. 7"
+            x-model="materialID"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="ri-old-scan">Old Copy ID / Barcode</label>
+          <input
+            id="ri-old-scan"
+            class="form-control"
+            type="text"
+            placeholder="Scan or type old barcode..."
+            x-model="oldScanID"
+            autocomplete="off"
+            autofocus
+            required>
+          <div class="form-text text-muted">The copy that was lost or damaged.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="ri-new-scan">New Copy ID / Barcode</label>
+          <input
+            id="ri-new-scan"
+            class="form-control"
+            type="text"
+            placeholder="Scan or type new barcode..."
+            x-model="newScanID"
+            autocomplete="off"
+            required>
+          <div class="form-text text-muted">The replacement copy being issued.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="ri-reason">Reason</label>
+          <select id="ri-reason" class="form-select" x-model="reason" required>
+            <option value="">— Select reason —</option>
+            <option value="lost">Lost</option>
+            <option value="damaged">Damaged</option>
+          </select>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-primary"
+            type="button"
+            @click="confirm"
+            :disabled="!oldScanID || !newScanID || !reason || !orderID">
+            Review &amp; Confirm <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Step 2: confirmation ===== -->
+  <div x-show="step === 'confirm'" x-cloak>
+    <div class="card">
+      <div class="card-header fw-semibold">Step 2 — Confirm Reissue</div>
+      <div class="card-body">
+
+        <dl class="row mb-3">
+          <dt class="col-sm-4">Order #</dt>
+          <dd class="col-sm-8" x-text="orderID"></dd>
+
+          <dt class="col-sm-4">Material ID</dt>
+          <dd class="col-sm-8" x-text="materialID"></dd>
+
+          <dt class="col-sm-4">Old Copy ID</dt>
+          <dd class="col-sm-8"><code x-text="oldScanID"></code></dd>
+
+          <dt class="col-sm-4">New Copy ID</dt>
+          <dd class="col-sm-8"><code x-text="newScanID"></code></dd>
+
+          <dt class="col-sm-4">Reason</dt>
+          <dd class="col-sm-8" x-text="reason"></dd>
+        </dl>
+
+        <p class="text-muted small mb-4">
+          This will record a <em x-text="reason"></em> event for the old copy and an
+          <em>issued</em> event for the new copy. This action cannot be undone.
+        </p>
+
+        <!-- POST the data on confirm -->
+        <form
+          method="POST"
+          action="/distribution/reissue"
+          hx-post="/distribution/reissue"
+          hx-target="#reissue-flash"
+          hx-swap="innerHTML">
+
+          <input type="hidden" name="order_id"    :value="orderID">
+          <input type="hidden" name="material_id" :value="materialID">
+          <input type="hidden" name="old_scan_id" :value="oldScanID">
+          <input type="hidden" name="new_scan_id" :value="newScanID">
+          <input type="hidden" name="reason"      :value="reason">
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-danger" type="submit"
+                    hx-on::before-request="this.disabled=true"
+                    hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+              <i class="bi bi-check-lg me-1"></i> Confirm Reissue
+            </button>
+            <button class="btn btn-outline-secondary" type="button" @click="back">
+              <i class="bi bi-arrow-left me-1"></i> Go Back
+            </button>
+          </div>
+        </form>
+
+        <div id="reissue-flash" aria-live="polite" class="mt-3"></div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

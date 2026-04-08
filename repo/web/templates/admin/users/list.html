@@ -1,0 +1,122 @@
+{{define "admin/users/list"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">User Management</h2>
+  <a href="/admin/users/new" class="btn btn-primary btn-sm">
+    <i class="bi bi-person-plus me-1"></i> New User
+  </a>
+</div>
+
+{{/* Role filter */}}
+<form method="GET" action="/admin/users" class="mb-3 d-flex align-items-center gap-2">
+  <label for="role" class="form-label mb-0 me-1">Filter by role:</label>
+  <select name="role" id="role" onchange="this.form.submit()"
+          class="form-select form-select-sm w-auto">
+    <option value="" {{if eq .RoleFilter ""}}selected{{end}}>All roles</option>
+    <option value="student"    {{if eq .RoleFilter "student"}}selected{{end}}>Student</option>
+    <option value="instructor" {{if eq .RoleFilter "instructor"}}selected{{end}}>Instructor</option>
+    <option value="clerk"      {{if eq .RoleFilter "clerk"}}selected{{end}}>Clerk</option>
+    <option value="moderator"  {{if eq .RoleFilter "moderator"}}selected{{end}}>Moderator</option>
+    <option value="admin"      {{if eq .RoleFilter "admin"}}selected{{end}}>Admin</option>
+  </select>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Users}}
+      <tr>
+        <td class="fw-medium">{{.Username}}</td>
+        <td class="text-muted">{{slice .Email 0 3}}***</td>
+        <td>
+          <span class="badge role-badge-{{.Role}}">{{.Role}}</span>
+        </td>
+        <td>
+          {{if .LockedUntil}}
+            <i class="bi bi-lock-fill text-danger me-1"></i>
+            <span class="text-danger small">Locked</span>
+          {{else}}
+            <span class="text-success small">Active</span>
+          {{end}}
+        </td>
+        <td class="text-muted small">{{.CreatedAt}}</td>
+        <td>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="/admin/users/{{.ID}}" class="btn btn-link btn-sm p-0">View</a>
+
+            {{/* Inline role change */}}
+            <form hx-post="/admin/users/{{.ID}}/role"
+                  hx-target="#flash-{{.ID}}"
+                  class="d-flex align-items-center gap-1">
+              <select name="role" class="form-select form-select-sm" style="width:auto">
+                <option value="student"    {{if eq .Role "student"}}selected{{end}}>Student</option>
+                <option value="instructor" {{if eq .Role "instructor"}}selected{{end}}>Instructor</option>
+                <option value="clerk"      {{if eq .Role "clerk"}}selected{{end}}>Clerk</option>
+                <option value="moderator"  {{if eq .Role "moderator"}}selected{{end}}>Moderator</option>
+                <option value="admin"      {{if eq .Role "admin"}}selected{{end}}>Admin</option>
+              </select>
+              <button type="submit"
+                      class="btn btn-sm btn-outline-primary"
+                      hx-on::before-request="this.disabled=true"
+                      hx-on::after-request="this.disabled=false">
+                <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+                Change
+              </button>
+            </form>
+
+            {{if .LockedUntil}}
+            <form hx-post="/admin/users/{{.ID}}/unlock"
+                  hx-target="#flash-{{.ID}}">
+              <button type="submit"
+                      class="btn btn-sm btn-outline-warning"
+                      hx-on::before-request="this.disabled=true"
+                      hx-on::after-request="this.disabled=false">
+                <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+                <i class="bi bi-unlock me-1"></i>Unlock
+              </button>
+            </form>
+            {{end}}
+
+            <span id="flash-{{.ID}}"></span>
+          </div>
+        </td>
+      </tr>
+      {{else}}
+      <tr>
+        <td colspan="6" class="text-center text-muted py-4">No users found.</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+
+{{/* Pagination */}}
+<nav aria-label="User list pagination">
+  <ul class="pagination pagination-sm">
+    {{if gt .Page 1}}
+    <li class="page-item">
+      <a class="page-link" href="?role={{.RoleFilter}}&page={{dec .Page}}">&laquo; Prev</a>
+    </li>
+    {{else}}
+    <li class="page-item disabled">
+      <span class="page-link">&laquo; Prev</span>
+    </li>
+    {{end}}
+    <li class="page-item active" aria-current="page">
+      <span class="page-link">Page {{.Page}}</span>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?role={{.RoleFilter}}&page={{inc .Page}}">Next &raquo;</a>
+    </li>
+  </ul>
+</nav>
+{{end}}

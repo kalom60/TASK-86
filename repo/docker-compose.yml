@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  portal:
+    build: .
+    container_name: district-portal
+    ports:
+      - "3000:3000"
+    volumes:
+      - portal_data:/app/data
+    environment:
+      - PORT=3000
+      - DB_PATH=/app/data/portal.db
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - APP_ENV=${APP_ENV:-production}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  portal_data:
+    driver: local

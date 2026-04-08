@@ -1,0 +1,103 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">My Favorites</h2>
+  <p class="text-muted mb-0 small">Organize and share your favorite materials</p>
+</div>
+
+{{/* Create New List Form */}}
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Create New List</h5>
+    <form
+      id="create-list-form"
+      hx-post="/favorites"
+      hx-target="#favorites-lists"
+      hx-swap="outerHTML"
+      hx-on::after-request="this.reset()">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <label class="form-label" for="list-name">List Name</label>
+          <input
+            class="form-control"
+            type="text"
+            id="list-name"
+            name="name"
+            placeholder="e.g. My Science Books"
+            maxlength="100"
+            required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="list-visibility">Visibility</label>
+          <select class="form-select" id="list-visibility" name="visibility">
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
+        </div>
+        <div class="col-md-auto">
+          <button class="btn btn-primary" type="submit"
+            hx-on::before-request="this.disabled=true"
+            hx-on::after-request="this.disabled=false">
+            <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+            <i class="bi bi-plus-lg me-1"></i>Create
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{/* Lists */}}
+<div>
+  <h5 class="mb-3">Your Lists</h5>
+
+  <div id="favorites-lists">
+    {{if .Lists}}
+    {{range .Lists}}
+    <div class="card mb-3" id="list-{{.ID}}">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="fw-semibold">{{.Name}}</span>
+            {{if eq .Visibility "public"}}
+            <span class="badge bg-primary">public</span>
+            {{else}}
+            <span class="badge bg-secondary">private</span>
+            {{end}}
+          </div>
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-outline-primary btn-sm"
+              hx-get="/favorites/{{.ID}}/share"
+              hx-target="#share-panel-{{.ID}}"
+              hx-swap="innerHTML"
+              type="button"
+              hx-on::before-request="this.disabled=true"
+              hx-on::after-request="this.disabled=false">
+              <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+              <i class="bi bi-share me-1"></i>Share
+            </button>
+            <a class="btn btn-outline-secondary btn-sm" href="/favorites/{{.ID}}">
+              <i class="bi bi-list-ul me-1"></i>View Items
+            </a>
+          </div>
+        </div>
+
+        <div
+          hx-get="/favorites/{{.ID}}/items"
+          hx-trigger="load"
+          hx-swap="innerHTML">
+          <span class="text-muted small">Loading…</span>
+        </div>
+
+        <div id="share-panel-{{.ID}}" class="mt-3"></div>
+      </div>
+    </div>
+    {{end}}
+    {{else}}
+    <div class="text-center text-muted py-5">
+      <i class="bi bi-heart fs-1 d-block mb-3"></i>
+      <p class="mb-1">You have no favorites lists yet.</p>
+      <p class="small">Use the form above to create your first list.</p>
+    </div>
+    {{end}}
+  </div>
+</div>

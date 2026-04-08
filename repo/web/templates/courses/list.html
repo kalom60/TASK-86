@@ -1,0 +1,39 @@
+{{define "content"}}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="h4 mb-0">My Courses</h2>
+  <a href="/courses/new" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> New Course
+  </a>
+</div>
+
+{{if .Courses}}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {{range .Courses}}
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="/courses/{{.ID}}" class="text-decoration-none stretched-link">{{.Name}}</a>
+        </h5>
+        <p class="card-text text-muted small mb-1">
+          {{if .Subject}}{{.Subject}}{{else}}<em>No subject</em>{{end}}
+          {{if .GradeLevel}} &middot; Grade {{.GradeLevel}}{{end}}
+        </p>
+        {{if .AcademicYear}}
+        <p class="card-text text-muted small">{{.AcademicYear}}</p>
+        {{end}}
+      </div>
+      <div class="card-footer text-muted small">
+        Created {{.CreatedAt}}
+      </div>
+    </div>
+  </div>
+  {{end}}
+</div>
+{{else}}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-journals display-4" aria-hidden="true"></i>
+  <p class="mt-3">No courses yet. <a href="/courses/new">Create your first course.</a></p>
+</div>
+{{end}}
+{{end}}

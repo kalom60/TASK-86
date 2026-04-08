@@ -1,0 +1,48 @@
+<form
+  id="login-form"
+  method="POST"
+  action="/login"
+  hx-post="/login"
+  hx-target="#login-form"
+  hx-swap="outerHTML"
+  novalidate>
+
+  {{if .Error}}
+  <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+    <span>{{.Error}}</span>
+  </div>
+  {{end}}
+
+  <div class="mb-3">
+    <label class="form-label fw-semibold" for="username">Username</label>
+    <input
+      class="form-control"
+      type="text"
+      id="username"
+      name="username"
+      value="{{if .Username}}{{.Username}}{{end}}"
+      autocomplete="username"
+      required
+      autofocus>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-semibold" for="password">Password</label>
+    <input
+      class="form-control"
+      type="password"
+      id="password"
+      name="password"
+      autocomplete="current-password"
+      required>
+  </div>
+
+  <div class="mt-4">
+    <button class="btn btn-primary w-100" type="submit">
+      <span class="htmx-indicator spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Sign In
+    </button>
+  </div>
+
+</form>

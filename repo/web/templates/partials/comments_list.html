@@ -1,0 +1,48 @@
+<div id="comments-list">
+  {{if .Comments}}
+  <ul class="list-group list-group-flush">
+    {{range .Comments}}
+    <li class="list-group-item {{if eq .Status "collapsed"}}bg-light{{end}}" id="comment-{{.ID}}">
+      {{if eq .Status "collapsed"}}
+      <div x-data="{open: false}">
+        <p class="text-muted fst-italic mb-1">
+          <i class="bi bi-eye-slash me-1"></i>Content hidden — pending review.
+        </p>
+        <button
+          class="btn btn-link btn-sm p-0 text-secondary"
+          x-on:click="open = !open"
+          :aria-expanded="open">
+          <span x-show="!open">Show anyway</span>
+          <span x-show="open">Hide</span>
+        </button>
+        <div x-show="open" class="mt-2">
+          <p class="mb-0">{{.Body}}</p>
+        </div>
+      </div>
+      {{else}}
+      <p class="mb-1">{{.Body}}</p>
+      {{end}}
+      <div class="d-flex align-items-center justify-content-between mt-2">
+        <small class="text-muted">{{.CreatedAt}}</small>
+        {{if $.User}}
+        <form
+          hx-post="/comments/{{.ID}}/report"
+          hx-target="#comment-{{.ID}}"
+          hx-swap="outerHTML">
+          <input type="hidden" name="reason" value="inappropriate">
+          <button type="submit" class="btn btn-link btn-sm text-danger p-0 ms-auto"
+            hx-on::before-request="this.disabled=true"
+            hx-on::after-request="this.disabled=false">
+            <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status"></span>
+            <i class="bi bi-flag me-1"></i>Report
+          </button>
+        </form>
+        {{end}}
+      </div>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="text-center text-muted py-4">No comments yet. Be the first!</p>
+  {{end}}
+</div>

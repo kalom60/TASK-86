@@ -1,0 +1,11 @@
+{{define "partials/stat_card_body"}}
+<div class="card-body d-flex align-items-center gap-3">
+  <div class="rounded-3 bg-{{.Color}} bg-opacity-10 p-3">
+    <i class="bi bi-{{.Icon}} fs-4 text-{{.Color}}"></i>
+  </div>
+  <div>
+    <div class="h3 fw-bold mb-0">{{.Count}}</div>
+    <div class="text-muted small">{{.Label}}</div>
+  </div>
+</div>
+{{end}}

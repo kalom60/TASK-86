@@ -1,0 +1,209 @@
+<!-- distribution/ledger.html — filterable distribution event ledger -->
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="h4 mb-0">Distribution Ledger</h2>
+    <p class="text-muted small mb-0">All distribution events — issue, return, exchange, reissue</p>
+  </div>
+</div>
+
+<!-- Filter form (full-page submit or HTMX partial refresh) -->
+<form
+  class="row g-2 align-items-end mb-4"
+  method="GET"
+  action="/distribution/ledger"
+  hx-get="/distribution/ledger/search"
+  hx-target="#ledger-results"
+  hx-swap="innerHTML"
+  hx-trigger="submit">
+
+  <div class="col-sm-6 col-md-3 col-lg-2">
+    <label class="form-label form-label-sm" for="filter-scan-id">Copy ID / Barcode</label>
+    <input
+      class="form-control form-control-sm"
+      type="text"
+      id="filter-scan-id"
+      name="scan_id"
+      placeholder="e.g. BC-0042"
+      value="{{if .Filters}}{{.Filters.ScanID}}{{end}}">
+  </div>
+
+  <div class="col-sm-6 col-md-2 col-lg-1">
+    <label class="form-label form-label-sm" for="filter-material-id">Material ID</label>
+    <input
+      class="form-control form-control-sm"
+      type="number"
+      id="filter-material-id"
+      name="material_id"
+      min="1"
+      placeholder="ID"
+      value="{{if .Filters}}{{if .Filters.MaterialID}}{{.Filters.MaterialID}}{{end}}{{end}}">
+  </div>
+
+  <div class="col-sm-6 col-md-3 col-lg-2">
+    <label class="form-label form-label-sm" for="filter-event-type">Event Type</label>
+    <select class="form-select form-select-sm" id="filter-event-type" name="event_type">
+      <option value="" {{if or (not .Filters) (eq .Filters.EventType "")}}selected{{end}}>All Events</option>
+      <option value="issued"   {{if and .Filters (eq .Filters.EventType "issued")}}selected{{end}}>Issued</option>
+      <option value="returned" {{if and .Filters (eq .Filters.EventType "returned")}}selected{{end}}>Returned</option>
+      <option value="lost"     {{if and .Filters (eq .Filters.EventType "lost")}}selected{{end}}>Lost</option>
+      <option value="damaged"  {{if and .Filters (eq .Filters.EventType "damaged")}}selected{{end}}>Damaged</option>
+    </select>
+  </div>
+
+  <div class="col-sm-6 col-md-2 col-lg-1">
+    <label class="form-label form-label-sm" for="filter-actor-id">Actor ID</label>
+    <input
+      class="form-control form-control-sm"
+      type="number"
+      id="filter-actor-id"
+      name="actor_id"
+      min="1"
+      placeholder="User ID"
+      value="{{if .Filters}}{{if .Filters.ActorID}}{{.Filters.ActorID}}{{end}}{{end}}">
+  </div>
+
+  <div class="col-sm-6 col-md-3 col-lg-2">
+    <label class="form-label form-label-sm" for="filter-date-from">From</label>
+    <input
+      class="form-control form-control-sm"
+      type="date"
+      id="filter-date-from"
+      name="date_from"
+      value="{{if .Filters}}{{.Filters.DateFrom}}{{end}}">
+  </div>
+
+  <div class="col-sm-6 col-md-3 col-lg-2">
+    <label class="form-label form-label-sm" for="filter-date-to">To</label>
+    <input
+      class="form-control form-control-sm"
+      type="date"
+      id="filter-date-to"
+      name="date_to"
+      value="{{if .Filters}}{{.Filters.DateTo}}{{end}}">
+  </div>
+
+  <div class="col-auto">
+    <button class="btn btn-primary btn-sm" type="submit">
+      <i class="bi bi-funnel me-1"></i>Apply
+    </button>
+    <a class="btn btn-outline-secondary btn-sm ms-1" href="/distribution/ledger">Clear</a>
+  </div>
+</form>
+
+<!-- Results -->
+<div id="ledger-results">
+  {{if .Events}}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" aria-label="Distribution events ledger">
+      <thead>
+        <tr>
+          <th scope="col">Copy ID</th>
+          <th scope="col">Order #</th>
+          <th scope="col">Material ID</th>
+          <th scope="col">Qty</th>
+          <th scope="col">Event</th>
+          <th scope="col">Actor</th>
+          <th scope="col">From &rarr; To</th>
+          <th scope="col">Date</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Events}}
+        <tr>
+
+          <td>
+            {{if .ScanID}}
+            <code>{{.ScanID}}</code>
+            {{else}}
+            <span class="text-muted">—</span>
+            {{end}}
+          </td>
+
+          <td>
+            {{if .OrderID}}
+            <a href="/orders/{{.OrderID}}">#{{.OrderID}}</a>
+            {{else}}
+            <span class="text-muted">—</span>
+            {{end}}
+          </td>
+
+          <td>{{.MaterialID}}</td>
+
+          <td>{{.Qty}}</td>
+
+          <td>
+            {{$et := .EventType}}
+            {{if eq $et "issued"}}
+            <span class="badge bg-primary">Issued</span>
+            {{else if eq $et "returned"}}
+            <span class="badge bg-success">Returned</span>
+            {{else if eq $et "lost"}}
+            <span class="badge bg-warning text-dark">Lost</span>
+            {{else if eq $et "damaged"}}
+            <span class="badge bg-danger">Damaged</span>
+            {{else if eq $et "reissued"}}
+            <span class="badge bg-info text-dark">Reissued</span>
+            {{else if eq $et "exchanged"}}
+            <span class="badge bg-info text-dark">Exchanged</span>
+            {{else}}
+            <span class="badge bg-secondary">{{$et}}</span>
+            {{end}}
+          </td>
+
+          <td>
+            {{if .ActorID}}{{.ActorID}}{{else}}<span class="text-muted">—</span>{{end}}
+          </td>
+
+          <td class="small">
+            {{if .CustodyFrom}}<span class="badge bg-secondary">{{.CustodyFrom}}</span>{{else}}<span class="text-muted">—</span>{{end}}
+            <i class="bi bi-arrow-right text-muted mx-1"></i>
+            {{if .CustodyTo}}<span class="badge bg-primary">{{.CustodyTo}}</span>{{else}}<span class="text-muted">—</span>{{end}}
+          </td>
+
+          <td class="small text-muted">{{.OccurredAt}}</td>
+
+          <td>
+            {{if .ScanID}}
+            <a class="btn btn-link btn-sm p-0" href="/distribution/custody/{{.ScanID}}">
+              <i class="bi bi-link-45deg me-1"></i>Custody Chain
+            </a>
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <nav aria-label="Ledger pagination">
+    <ul class="pagination pagination-sm">
+      {{if gt .Page 1}}
+      <li class="page-item">
+        <a class="page-link" href="?page={{add .Page -1}}{{if .Filters}}&scan_id={{.Filters.ScanID}}&event_type={{.Filters.EventType}}&date_from={{.Filters.DateFrom}}&date_to={{.Filters.DateTo}}{{end}}">&laquo; Prev</a>
+      </li>
+      {{else}}
+      <li class="page-item disabled">
+        <span class="page-link">&laquo; Prev</span>
+      </li>
+      {{end}}
+      <li class="page-item active" aria-current="page">
+        <span class="page-link">Page {{.Page}}</span>
+      </li>
+      {{if ge (len .Events) .Limit}}
+      <li class="page-item">
+        <a class="page-link" href="?page={{add .Page 1}}{{if .Filters}}&scan_id={{.Filters.ScanID}}&event_type={{.Filters.EventType}}&date_from={{.Filters.DateFrom}}&date_to={{.Filters.DateTo}}{{end}}">Next &raquo;</a>
+      </li>
+      {{end}}
+    </ul>
+  </nav>
+
+  {{else}}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-journal-x fs-1 d-block mb-2 opacity-25"></i>
+    <p class="mb-0">No events match the current filters.</p>
+  </div>
+  {{end}}
+</div>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{if .Title}}{{.Title}} — {{end}}District Materials Portal</title>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="d-flex">
+
+  <!-- Session expired banner (shown by JS on 401 responses) -->
+  <div id="session-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:1000;" class="alert alert-danger rounded-0 mb-0 d-flex align-items-center gap-2" role="alert">
+    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+    <span>Your session has expired. <a href="/login" class="alert-link">Log in again</a></span>
+  </div>
+
+  <!-- ============================================================
+       Sidebar Navigation
+  ============================================================= -->
+  <nav class="portal-sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <i class="bi bi-journal-bookmark-fill me-2"></i>District Portal
+    </div>
+
+    {{if .User}}
+    <div class="px-3 py-2">
+      <span class="badge role-badge-{{.User.Role}} text-capitalize">{{.User.Role}}</span>
+    </div>
+    {{end}}
+
+    <ul class="nav flex-column px-2 mt-1 flex-grow-1">
+
+      <!-- All roles -->
+      <li class="nav-item">
+        <a href="/dashboard" class="nav-link {{if eq .ActivePage "dashboard"}}active{{end}}">
+          <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/materials" class="nav-link {{if eq .ActivePage "materials"}}active{{end}}">
+          <i class="bi bi-book me-2"></i>Materials
+        </a>
+      </li>
+
+      {{if .User}}
+
+      {{if eq .User.Role "student"}}
+      <li class="nav-item">
+        <a href="/orders" class="nav-link {{if eq .ActivePage "orders"}}active{{end}}">
+          <i class="bi bi-cart me-2"></i>My Orders
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/favorites" class="nav-link {{if eq .ActivePage "favorites"}}active{{end}}">
+          <i class="bi bi-heart me-2"></i>Favorites
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/inbox" class="nav-link {{if eq .ActivePage "inbox"}}active{{end}}">
+          <i class="bi bi-bell me-2"></i>Inbox
+          <span id="inbox-badge" hx-get="/api/inbox/unread-count" hx-trigger="load, every 60s" hx-swap="outerHTML"></span>
+        </a>
+      </li>
+      {{end}}
+
+      {{if eq .User.Role "instructor"}}
+      <li class="nav-item">
+        <a href="/dashboard/instructor" class="nav-link {{if eq .ActivePage "course-plans"}}active{{end}}">
+          <i class="bi bi-calendar3 me-2"></i>Course Plans
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/returns" class="nav-link {{if eq .ActivePage "approvals"}}active{{end}}">
+          <i class="bi bi-check-circle me-2"></i>Approvals
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/inbox" class="nav-link {{if eq .ActivePage "inbox"}}active{{end}}">
+          <i class="bi bi-bell me-2"></i>Inbox
+          <span id="inbox-badge" hx-get="/api/inbox/unread-count" hx-trigger="load, every 60s" hx-swap="outerHTML"></span>
+        </a>
+      </li>
+      {{end}}
+
+      {{if eq .User.Role "clerk"}}
+      <li class="nav-item">
+        <a href="/distribution" class="nav-link {{if eq .ActivePage "distribution"}}active{{end}}">
+          <i class="bi bi-box-seam me-2"></i>Distribution
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/distribution/ledger" class="nav-link {{if eq .ActivePage "ledger"}}active{{end}}">
+          <i class="bi bi-journal-text me-2"></i>Ledger
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/inbox" class="nav-link {{if eq .ActivePage "inbox"}}active{{end}}">
+          <i class="bi bi-bell me-2"></i>Inbox
+          <span id="inbox-badge" hx-get="/api/inbox/unread-count" hx-trigger="load, every 60s" hx-swap="outerHTML"></span>
+        </a>
+      </li>
+      {{end}}
+
+      {{if eq .User.Role "moderator"}}
+      <li class="nav-item">
+        <a href="/moderation" class="nav-link {{if eq .ActivePage "moderation"}}active{{end}}">
+          <i class="bi bi-shield-check me-2"></i>Moderation Queue
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/inbox" class="nav-link {{if eq .ActivePage "inbox"}}active{{end}}">
+          <i class="bi bi-bell me-2"></i>Inbox
+          <span id="inbox-badge" hx-get="/api/inbox/unread-count" hx-trigger="load, every 60s" hx-swap="outerHTML"></span>
+        </a>
+      </li>
+      {{end}}
+
+      {{if eq .User.Role "admin"}}
+      <li class="nav-item">
+        <a href="/admin/users" class="nav-link {{if eq .ActivePage "users"}}active{{end}}">
+          <i class="bi bi-people me-2"></i>Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/analytics/map" class="nav-link {{if eq .ActivePage "analytics"}}active{{end}}">
+          <i class="bi bi-bar-chart me-2"></i>Analytics
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/admin/users" class="nav-link {{if eq .ActivePage "admin-settings"}}active{{end}}">
+          <i class="bi bi-gear me-2"></i>Admin Settings
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/inbox" class="nav-link {{if eq .ActivePage "inbox"}}active{{end}}">
+          <i class="bi bi-bell me-2"></i>Inbox
+          <span id="inbox-badge" hx-get="/api/inbox/unread-count" hx-trigger="load, every 60s" hx-swap="outerHTML"></span>
+        </a>
+      </li>
+      {{end}}
+
+      {{end}}{{/* end if .User */}}
+
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       Main Area
+  ============================================================= -->
+  <div class="d-flex flex-column flex-grow-1 overflow-hidden">
+
+    <!-- Topbar -->
+    <header class="portal-topbar">
+      <button class="btn btn-link d-md-none p-0 text-secondary" id="sidebar-toggle" type="button" aria-label="Toggle sidebar">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <span class="fw-semibold text-secondary flex-grow-1 d-none d-md-block">{{if .Title}}{{.Title}}{{end}}</span>
+      <span class="ms-auto d-flex align-items-center gap-3">
+        {{if .User}}
+        <a href="/inbox" class="text-secondary position-relative" aria-label="Inbox">
+          <i class="bi bi-bell fs-5"></i>
+        </a>
+        <span class="fw-medium text-secondary small">{{.User.Username}}</span>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          hx-post="/logout"
+          hx-confirm="Sign out?"
+          hx-target="body"
+          hx-swap="none"
+          onclick="if(!confirmAction('Sign out?')) return false;">
+          Sign Out
+        </button>
+        {{end}}
+      </span>
+    </header>
+
+    <!-- Page content -->
+    <main class="flex-grow-1 overflow-auto p-4" id="content">
+      {{embed}}
+    </main>
+
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="/static/js/htmx.min.js"></script>
+  <script defer src="/static/js/alpine.min.js"></script>
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script>
+    // Session expired handler
+    document.body.addEventListener('htmx:responseError', function(e) {
+      if (e.detail.xhr.status === 401) {
+        var b = document.getElementById('session-banner');
+        if (b) { b.style.display = 'flex'; }
+      }
+    });
+    // Mobile sidebar toggle
+    document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+    // CSRF: inject X-Csrf-Token header on every HTMX non-GET request.
+    function getCsrfToken() {
+      var match = document.cookie.match(/(?:^|; )csrf_token=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : '';
+    }
+    document.body.addEventListener('htmx:configRequest', function(e) {
+      var method = (e.detail.verb || '').toUpperCase();
+      if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+        e.detail.headers['X-Csrf-Token'] = getCsrfToken();
+      }
+    });
+  </script>
+</body>
+</html>

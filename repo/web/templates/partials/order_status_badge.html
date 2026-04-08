@@ -1,0 +1,10 @@
+{{define "partials/order_status_badge"}}
+<span class="badge {{if eq .Status "pending_payment"}}badge-pending-payment{{else if eq .Status "pending_shipment"}}badge-pending-shipment{{else if eq .Status "in_transit"}}badge-in-transit{{else if eq .Status "completed"}}badge-completed{{else if eq .Status "canceled"}}badge-canceled{{else}}bg-secondary{{end}}">
+  {{if eq .Status "pending_payment"}}Pending Payment
+  {{else if eq .Status "pending_shipment"}}Pending Shipment
+  {{else if eq .Status "in_transit"}}In Transit
+  {{else if eq .Status "completed"}}Completed
+  {{else if eq .Status "canceled"}}Canceled
+  {{else}}{{.Status}}{{end}}
+</span>
+{{end}}

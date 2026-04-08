@@ -1,0 +1,166 @@
+{{define "admin/users/profile"}}
+<div class="mb-3">
+  <a href="/admin/users" class="btn btn-link btn-sm p-0">
+    <i class="bi bi-arrow-left me-1"></i> Back to Users
+  </a>
+</div>
+
+{{if .TargetUser}}
+{{with .TargetUser}}
+<div class="row g-4">
+
+  {{/* Left column: user info card */}}
+  <div class="col-lg-5">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h2 class="h4 mb-1">{{.Username}}</h2>
+        <p class="text-muted small mb-3">{{.Email}}</p>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <span class="badge role-badge-{{.Role}} text-capitalize">{{.Role}}</span>
+          {{if .LockedUntil}}
+            <span class="badge bg-danger">Locked until {{.LockedUntil}}</span>
+            <form hx-post="/admin/users/{{.ID}}/unlock" hx-target="#profile-flash" class="d-inline">
+              <button type="submit"
+                      class="btn btn-sm btn-outline-warning"
+                      hx-on::before-request="this.disabled=true"
+                      hx-on::after-request="this.disabled=false">
+                <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+                <i class="bi bi-unlock me-1"></i>Unlock Account
+              </button>
+            </form>
+          {{else}}
+            <span class="badge bg-success">Active</span>
+          {{end}}
+        </div>
+        <div id="profile-flash" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  {{/* Right column: custom fields + audit */}}
+  <div class="col-lg-7">
+{{end}}{{/* end with .TargetUser */}}
+
+    {{/* Custom fields section */}}
+    <div class="card mb-4">
+      <div class="card-header fw-semibold">Custom Fields</div>
+      <div class="card-body">
+
+        {{if .Fields}}
+        <div class="table-responsive mb-3">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+                <th>Encrypted</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Fields}}
+              <tr>
+                <td class="fw-medium">{{.FieldName}}</td>
+                <td class="font-monospace small">
+                  {{if eq .IsEncrypted 1}}
+                    <span class="text-muted">
+                      <i class="bi bi-eye-slash me-1"></i>••••••
+                    </span>
+                    <span class="text-muted small d-block">Decrypt via API</span>
+                  {{else}}
+                    {{if .FieldValue}}{{.FieldValue}}{{else}}<span class="text-muted">—</span>{{end}}
+                  {{end}}
+                </td>
+                <td>
+                  {{if eq .IsEncrypted 1}}
+                    <span class="badge bg-success-subtle text-success">Yes</span>
+                  {{else}}
+                    <span class="text-muted small">No</span>
+                  {{end}}
+                </td>
+                <td>
+                  <form hx-delete="/admin/users/{{$.TargetID}}/fields/{{.FieldName}}"
+                        hx-target="#fields-flash"
+                        hx-confirm="Delete this field?">
+                    <button type="submit"
+                            class="btn btn-link btn-sm p-0 text-danger"
+                            hx-on::before-request="this.disabled=true"
+                            hx-on::after-request="this.disabled=false">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+        {{else}}
+        <p class="text-muted small mb-3">No custom fields yet.</p>
+        {{end}}
+
+        <div id="fields-flash" class="mb-2"></div>
+
+        <form hx-post="/admin/users/{{.TargetID}}/fields" hx-target="#fields-flash">
+          <div class="row g-2 align-items-end">
+            <div class="col-sm-4">
+              <label class="form-label form-label-sm">Field name</label>
+              <input type="text" name="field_name" placeholder="Field name" required
+                     class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label form-label-sm">Value</label>
+              <input type="text" name="field_value" placeholder="Value"
+                     class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-2">
+              <div class="form-check">
+                <input type="checkbox" name="encrypt" value="true"
+                       class="form-check-input" id="encrypt-check">
+                <label class="form-check-label small" for="encrypt-check">Encrypt</label>
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <button type="submit"
+                      class="btn btn-primary btn-sm w-100"
+                      hx-on::before-request="this.disabled=true"
+                      hx-on::after-request="this.disabled=false">
+                <span class="spinner-border spinner-border-sm htmx-indicator me-1" role="status" aria-hidden="true"></span>
+                Save
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    {{/* Audit trail */}}
+    {{if .AuditLog}}
+    <div class="card">
+      <div class="card-header fw-semibold">Audit Trail</div>
+      <ul class="list-group list-group-flush">
+        {{range .AuditLog}}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="badge bg-secondary me-2">{{.Action}}</span>
+              <span class="small text-muted">
+                by {{if .ActorID}}#{{.ActorID}}{{else}}system{{end}}
+              </span>
+            </div>
+            <div class="text-muted small text-end">
+              {{.CreatedAt}}<br>
+              {{if .IP}}<span class="font-monospace">{{.IP}}</span>{{else}}—{{end}}
+            </div>
+          </div>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    {{end}}
+
+  </div>{{/* end right col */}}
+</div>{{/* end row */}}
+{{end}}{{/* end if .TargetUser */}}
+{{end}}

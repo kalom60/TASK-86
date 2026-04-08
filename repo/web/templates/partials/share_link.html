@@ -1,0 +1,19 @@
+<div x-data="{copied: false}">
+  <label class="form-label small" for="share-url">Share Link (expires in 7 days)</label>
+  <div class="input-group input-group-sm">
+    <input
+      class="form-control"
+      type="text"
+      id="share-url"
+      value="{{.ShareURL}}"
+      readonly
+      onclick="this.select()">
+    <button
+      class="btn btn-outline-secondary"
+      x-on:click="navigator.clipboard.writeText('{{.ShareURL}}').then(() => { copied = true; setTimeout(() => copied = false, 2000) })"
+      type="button">
+      <i class="bi bi-clipboard me-1"></i>
+      <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+    </button>
+  </div>
+</div>
