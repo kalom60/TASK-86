@@ -49,13 +49,17 @@ A web-based portal for managing district-wide distribution of educational materi
 
 4. **Configure environment**
 
-   Copy the committed template and fill in the two required secrets:
+   Generate the required secrets and write `.env` in one step:
 
    ```bash
-   cp .env.example .env
-   # Then edit .env:
-   ENCRYPTION_KEY=$(openssl rand -hex 32)  # replace placeholder
-   SESSION_SECRET=$(openssl rand -hex 32)  # replace placeholder
+   cat > .env << EOF
+   PORT=3000
+   DB_PATH=data/portal.db
+   ENCRYPTION_KEY=$(openssl rand -hex 32)
+   SESSION_SECRET=$(openssl rand -hex 32)
+   APP_ENV=development
+   TIMEZONE=UTC
+   EOF
    ```
 
    The `.env` file is gitignored — **never commit it with real secrets**.
@@ -75,26 +79,40 @@ A web-based portal for managing district-wide distribution of educational materi
 ## Docker
 
 ### Quick start
-```bash
-# Create .env from the committed template (gitignored — never commit the filled .env)
-cp .env.example .env
-# Fill in the two required secrets (remove placeholder values):
-sed -i '' "s|<replace-with-32-byte-hex-encoded-key>|$(openssl rand -hex 32)|" .env
-sed -i '' "s|<replace-with-long-random-secret>|$(openssl rand -hex 32)|" .env
 
+```bash
+# 1. Generate .env with cryptographically-random secrets (portable — macOS and Linux)
+cat > .env << EOF
+PORT=3000
+DB_PATH=/app/data/portal.db
+ENCRYPTION_KEY=$(openssl rand -hex 32)
+SESSION_SECRET=$(openssl rand -hex 32)
+APP_ENV=production
+TIMEZONE=UTC
+EOF
+
+# 2. Build and start (detached)
 docker compose up -d
+
+# 3. Retrieve the one-time admin password printed on first boot
+docker compose logs portal | grep SECURITY
 ```
 
-### Development (with live template reload)
+> The `temporary_password` field in that log line is the admin password.
+> Log in at `http://localhost:3000` and change it immediately via Admin Settings.
+
+### Development (live template reload)
+
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
 
 ### Useful commands
+
 ```bash
-make docker-logs     # tail logs
-make docker-down     # stop
-make test            # run tests locally
+make docker-logs   # tail logs (Ctrl-C to stop)
+make docker-down   # stop and remove containers
+make test          # run test suite locally (no Docker required)
 ```
 
 ## Running Tests (no Docker)
