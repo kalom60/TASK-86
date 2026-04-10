@@ -11,7 +11,8 @@ data/
 .env.*.local
 
 # Built binary
-server
+/server
+/bin/
 dist/
 
 # Offline map tiles — exclude everything except the seed tiles (zoom 0-2)
