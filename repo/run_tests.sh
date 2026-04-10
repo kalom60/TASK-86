@@ -6,8 +6,34 @@
 #   ./run_tests.sh -v         # verbose (stream test output)
 #   ./run_tests.sh -race      # enable Go race detector
 #   ./run_tests.sh -v -race   # both
+#
+# Go version requirement: this project requires Go 1.22+ (uses log/slog).
+# If the host toolchain is older, the script automatically re-executes itself
+# inside a golang:1.22-bookworm container (which already includes gcc for CGO).
 
 set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Docker wrapper — re-run inside Go 1.22 container if host version is too old
+# ---------------------------------------------------------------------------
+if [[ -z "${IN_DOCKER:-}" ]]; then
+  # Extract the host Go minor version (0 if go is absent or unparseable).
+  HOST_GO_MINOR=0
+  if command -v go &>/dev/null; then
+    HOST_GO_MINOR=$(go version 2>/dev/null | grep -oE 'go1\.([0-9]+)' | grep -oE '[0-9]+$' || echo 0)
+  fi
+
+  if [[ "$HOST_GO_MINOR" -lt 22 ]] && command -v docker &>/dev/null; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    exec docker run --rm \
+      -e IN_DOCKER=1 \
+      -e CGO_ENABLED=1 \
+      -v "${SCRIPT_DIR}:/workspace" \
+      -w /workspace \
+      golang:1.22-bookworm \
+      bash /workspace/run_tests.sh "$@"
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 # Colour helpers
