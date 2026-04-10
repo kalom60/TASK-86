@@ -34,11 +34,15 @@ func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
 // Returns 429 JSON {"error": "rate limit exceeded"} when the limit is reached.
 func (rl *RateLimiter) Middleware(keyFn func(*fiber.Ctx) string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		key := keyFn(c)
-		if key == "" {
+		// Fiber's c.Get() returns a string backed by fasthttp's request buffer,
+		// which may be reused across requests. Force a copy so the map key is
+		// owned by this function and not aliased to a transient buffer.
+		raw := keyFn(c)
+		if raw == "" {
 			// No key — cannot rate-limit; pass through.
 			return c.Next()
 		}
+		key := string([]byte(raw))
 
 		now := time.Now()
 		cutoff := now.Add(-rl.window)
@@ -46,7 +50,7 @@ func (rl *RateLimiter) Middleware(keyFn func(*fiber.Ctx) string) fiber.Handler {
 		rl.mu.Lock()
 		// Evict timestamps outside the sliding window.
 		times := rl.windows[key]
-		valid := times[:0]
+		valid := make([]time.Time, 0, len(times))
 		for _, t := range times {
 			if t.After(cutoff) {
 				valid = append(valid, t)
