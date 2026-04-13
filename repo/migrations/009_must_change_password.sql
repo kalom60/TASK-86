@@ -4,10 +4,12 @@
 -- redirects the user to a mandatory password-reset page immediately after login
 -- instead of the normal dashboard.
 --
--- The seeded default admin account ships with a known password; it must rotate
--- that credential before accessing any portal functionality.
+-- The seeded default admin account ships with a non-functional bootstrap
+-- placeholder credential.  On first boot, the server auto-rotates it to a
+-- cryptographically-random password and sets must_change_password = 1 so the
+-- operator is forced to change it immediately after their first login.
 
 ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0;
 
--- Force the seeded admin account to change their password on first login.
+-- Flag the seeded admin account so the first login forces an immediate password reset.
 UPDATE users SET must_change_password = 1 WHERE username = 'admin';
